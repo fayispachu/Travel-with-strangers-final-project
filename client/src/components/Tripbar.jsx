@@ -11,6 +11,7 @@ function Tripbar() {
       {trips.length === 0 && (
         <p className="font-bolt text-red-800">No trips found"{searchTerm}"</p>
       )}
+
       <div className="flex flex-col md:items-start items-center md:gap-6 md:ml-10 gap-3 overflow-y-scroll overflow-x-hidden md:p-2 p-1 md:h-[60vh]  h-[33vh]">
         {filteredTrip.map((trips, index) => (
           <div
