@@ -2,10 +2,9 @@ import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import googleicon from "../assets/google.png";
 import facebookicon from "../assets/facebook.png";
-import { UserContext } from "../App";
 import axios from "axios";
+import { UserContext } from "../context/AuthenticationContext";
 function Login() {
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
   const [password, setPassword] = useState("");
@@ -38,13 +37,7 @@ function Login() {
           </section>
           <section className="bg-white w-[50%] h-full flex flex-col items-center justify-center gap-3 ">
             <h1 className="text-[#33D69F] font-bold text-2xl mb-16">Login</h1>
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              type="text"
-              placeholder="Name"
-              className="px-11 py-3 border border-[#33D69F] "
-            />
+
             <input
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -64,7 +57,7 @@ function Login() {
               <img className="w-7" src={facebookicon} alt="" />
             </div>
 
-            <Link to="/">
+            <Link to="/profile">
               <button
                 onClick={loginData}
                 className="bg-[#33D69F] px-[20%] py-3 font-semibold border border-[#33D69F] "

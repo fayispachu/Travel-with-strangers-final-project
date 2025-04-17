@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
-import { UserContext } from "../App";
-import userimage from "../assets/userimage.avif";
+import userimage from "../assets/userimg.avif";
 import { Link } from "react-router-dom";
 import logout from "../assets/logout.png";
+import { UserContext } from "../context/AuthenticationContext";
 function Sidebar({ toggleSidebar, sidebarOpen }) {
   const { user } = useContext(UserContext);
 

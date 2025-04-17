@@ -5,8 +5,6 @@ const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // const newUser = await User.create({ name, email, password });
-    // console.log(newUser);
     const document = await User.findOne({ email });
     if (document) {
       return res.status(400).json({ msg: "User already exist" });
@@ -20,15 +18,6 @@ const registerUser = async (req, res) => {
     console.log("Error in register backend", error);
   }
 };
-
-// const getUser = async (req, res) => {
-//   try {
-//     const user = await User.find();
-//     return res.status(201).json({ msg: "User Data get success", user });
-//   } catch (error) {
-//     console.log(error, "error in get user");
-//   }
-// };
 
 const loginData = async (req, res) => {
   try {
@@ -51,8 +40,8 @@ const loginData = async (req, res) => {
 
 const getProfileFromtoken = async (req, res) => {
   try {
-    const document = req.user;
-    return res.status(201).json({ msg: "Profile get success", document });
+    const doc = req.user;
+    return res.status(201).json({ msg: "Profile get success", doc });
   } catch (error) {
     console.log(error, "error in getprofile from token backend");
   }

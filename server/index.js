@@ -1,9 +1,3 @@
-// const fs = require("fs");
-// const path = require("path");
-// const uploadsDir = path.join(__dirname, "uploads");
-// if (!fs.existsSync(uploadsDir)) {
-//   fs.mkdirSync(uploadsDir);
-// }
 const express = require("express");
 
 const app = express();
@@ -14,6 +8,7 @@ app.use(cors());
 require("dotenv").config();
 app.use(express.json());
 const mongoose = require("mongoose");
+
 mongoose
   .connect(process.env.CONN_STRING)
   .then(() => {

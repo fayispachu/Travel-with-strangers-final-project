@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
-
 const userAuthenticationSchema = {
+  profile: String,
   name: String,
   email: String,
   password: String,

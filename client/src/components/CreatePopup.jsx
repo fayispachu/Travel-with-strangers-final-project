@@ -5,10 +5,10 @@ import close from "../assets/close.png";
 import axios from "axios";
 function CreatePopup() {
   const [isPopup, setPopup] = useState(false);
-
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState("");
   const [place, setPlace] = useState("");
   const [details, setDetails] = useState("");
+  const [date, setDate] = useState("");
 
   function openPopup() {
     setPopup(true);
@@ -16,47 +16,55 @@ function CreatePopup() {
   function closePopup() {
     setPopup(false);
   }
-  const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
-  };
 
-  const handleCreating = async () => {
-    if (!image || !place || !details) {
-      console.log("all fields are required");
-    }
-    const formData = new FormData();
-    formData.append("image", image);
-    formData.append("upload_preset", "Trip_plan_imges");
-    formData.append("cloud_name", "dtcjm5qss");
-    const res = await axios.post(
-      "https://api.cloudinary.com=cloudinary://763364614137655:n36Ix9WVvYSdObXqt3QB0f7nHPs@dtcjm5qss",
-      {
-        body: formData,
-      }
-    );
-    const uploadedImage = await res.json();
-    console.log(uploadedImage);
+  const handleAddImage = async (e) => {
+    try {
+      const image = e.target.files[0];
+      if (!image) return;
 
-    formData.append("place", place);
-    formData.append("details", details);
-
-    console.log("FormData values:", { image, place, details });
-
-    try { 
+      const formData = new FormData();
+      formData.append("file", image);
+      formData.append("upload_preset", "Trip_plan_imges");
       const { data } = await axios.post(
-        "http://localhost:4000/api/trip/createdtrip",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        "https://api.cloudinary.com/v1_1/dtcjm5qss/image/upload",
+        formData
       );
 
-      console.log(data);
+      setImage(data.secure_url);
+      console.log("uploadedImage", data);
+    } catch (error) {
+      console.log(error, "Error from adding image trip front");
+    }
+  };
+
+  const handleCreateTrip = async () => {
+    if (!image || !place || !details) {
+      console.log("All fields are required");
+      return;
+    }
+    const createdTrip = {
+      image: image,
+      place,
+      details,
+      date,
+    };
+    const token = localStorage.getItem("token");
+    try {
+      const { data } = await axios.post(
+        "http://localhost:4000/api/trip/createtrip",
+        createdTrip,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          "Content-Type": "application/json",
+        }
+      );
+      console.log(data.newTrip);
+      setImage("");
+      setPlace("");
+      setDetails("");
       closePopup();
     } catch (error) {
-      console.log(error, "error in create popup create");
+      console.log(error, "Error from Creating trip front");
     }
   };
 
@@ -77,8 +85,9 @@ function CreatePopup() {
             </div>
             <input
               type="file"
-              onChange={handleImageChange}
+              onChange={handleAddImage}
               className="md:w-[100%]  md:h-36 h-24 rounded-md"
+              placeholder="Add image"
               alt=""
             />
             <div className="flex flex-col items-start gap-2 ">
@@ -86,15 +95,25 @@ function CreatePopup() {
                 onChange={(e) => setPlace(e.target.value)}
                 className="font-bold md:text-lg  border"
                 value={place}
+                placeholder="place name"
               />
+              <input
+                onChange={(e) => setDate(e.target.value)}
+                className="font-bold md:text-lg  border"
+                value={date}
+                type="date"
+                placeholder="Date"
+              />
+
               <input
                 onChange={(e) => setDetails(e.target.value)}
                 className="border"
                 value={details}
+                placeholder="details"
               />
 
               <button
-                onClick={handleCreating}
+                onClick={handleCreateTrip}
                 className="px-5 py-3 text-white bg-black rounded-md"
               >
                 Submit

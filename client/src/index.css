@@ -1,1 +1,6 @@
+@import url("https://fonts.googleapis.com/css2?family=Finger+Paint&display=swap");
+
 @import "tailwindcss";
+@theme {
+  --font-display: "Finger Paint", sans-serif;
+}

@@ -2,8 +2,8 @@ import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import googleicon from "../assets/google.png";
 import facebookicon from "../assets/facebook.png";
-import { UserContext } from "../App";
 import axios from "axios";
+import { UserContext } from "../context/AuthenticationContext";
 function AdminLogin() {
   const [email, setEmail] = useState("");
 

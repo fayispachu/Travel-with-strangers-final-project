@@ -1,6 +1,8 @@
 import React from "react";
 
 function LatestTripAdminPage() {
+
+
   return (
     <>
       <div className="bg-white  w-[90%] h-[70vh] ml-16 px-7">

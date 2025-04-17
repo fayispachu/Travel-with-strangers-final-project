@@ -4,9 +4,9 @@ const userRouter = express.Router();
 const tripRouter = express.Router();
 const {
   createTrip,
-  // upload,
-  // getOneTrip,
+  getOneTrip,
   getAllTrips,
+  getMyTrip,
 } = require("../controller/createtrip.controller");
 
 const {
@@ -14,11 +14,22 @@ const {
   loginData,
   getProfileFromtoken,
 } = require("../controller/userauthentication.controller");
-userRouter.post("/create", registerUser);
-userRouter.post("/login", loginData, getProfileFromtoken);
-userRouter.get("/", getProfileFromtoken);
 
-tripRouter.post("/createdtrip", createTrip); //upload.single("image"),
+const { authenticateUser } = require("../middleware/auth");
+
+userRouter.post("/create", registerUser);
+userRouter.post("/login", loginData);
+userRouter.get("/profile", authenticateUser, getProfileFromtoken);
+
+tripRouter.post(
+  "/createtrip",
+
+  authenticateUser,
+  createTrip
+);
 tripRouter.get("/alltrips", getAllTrips);
-// tripRouter.post("/tripdetails", getOneTrip);
+tripRouter.post("/onetrip", getOneTrip);
+
+tripRouter.get("/mytrip", authenticateUser, getMyTrip);
+
 module.exports = { tripRouter, userRouter };
