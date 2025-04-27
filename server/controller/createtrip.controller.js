@@ -1,5 +1,6 @@
 const { CreateTrip } = require("../models/createtrip.model");
 const { User } = require("../models/userAuthentication.model");
+const { CreateUserPost } = require("../models/userpost.mode");
 
 const createTrip = async (req, res) => {
   try {
@@ -37,12 +38,43 @@ const createTrip = async (req, res) => {
   }
 };
 
+const UserPost = async (req, res) => {
+  try {
+    const { image, description } = req.body;
+    if (!image || !description) {
+      return res
+        .status(400)
+        .json({ msg: "All fields are required from user post" });
+    }
+
+    const id = req.user.id;
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(400).json({ msg: "User not found from user post" });
+    }
+    const newPost = await CreateUserPost.create({
+      image,
+      description,
+      profile: user.profile,
+      name: user.name,
+      createdBy: req.user.id,
+      createdAt: Date.now,
+    });
+
+    console.log(newPost);
+
+    return res.status(201).json({ msg: "Post Created Successfully", newPost });
+  } catch (error) {
+    console.log(error, "error from backend user post ");
+    return res.status(500).json({ msg: "Error from userPost" });
+  }
+};
+
 const getAllTrips = async (req, res) => {
   try {
     const { place } = req.query;
 
     const query = place ? { place: { $regex: place, $options: "i" } } : {};
-    res.status(200).json(searchTrips);
     const allTrips = await CreateTrip.find(query).sort({ createdAt: -1 });
     res.status(200).json({ msg: "Trips all get success", allTrips });
   } catch (error) {
@@ -98,4 +130,5 @@ module.exports = {
   getAllTrips,
   getOneTrip,
   getMyTrip,
+  UserPost,
 };

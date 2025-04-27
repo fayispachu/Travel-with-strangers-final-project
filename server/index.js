@@ -19,9 +19,12 @@ mongoose
   });
 
 const { tripRouter, userRouter } = require("./routes/user.route");
+const { agenciesRouter } = require("./routes/agencies.routes");
 
 app.use("/api/user", userRouter);
 app.use("/api/trip", tripRouter);
+app.use("/api/agency", agenciesRouter);
+
 app.listen(port, () => {
   console.log(`Server running on port http://localhost:4000`);
 });

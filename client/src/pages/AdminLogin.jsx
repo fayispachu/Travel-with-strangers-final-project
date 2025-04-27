@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import googleicon from "../assets/google.png";
 import facebookicon from "../assets/facebook.png";
 import axios from "axios";
-import { UserContext } from "../context/AuthenticationContext";
+import { UserContext } from "../context/UserContext";
 function AdminLogin() {
   const [email, setEmail] = useState("");
 

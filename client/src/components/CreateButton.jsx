@@ -1,17 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
+import { TripContext } from "../context/TripContext";
 
-function CreateButton({ openPopup }) {
-
-
+function CreateButton() {
+  const { openPopup } = useContext(TripContext);
 
   return (
     <>
-      <button
-        onClick={openPopup}
-        className="bg-[#33D69F] absolute rounded-full   px-3 py-5 bottom-36 right-10 text-white font-semibold border border-[#33D69F] "
-      >
-        Create
-      </button>
+      <div className="absolute    flex  gap-1">
+        <button
+          onClick={openPopup}
+          className="bg-[#33D69F]  drop-shadow-xl  rounded-md   px-3 py-3 text-white font-semibold border border-[#33D69F] "
+        >
+          Create
+        </button>
+      </div>
     </>
   );
 }

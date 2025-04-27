@@ -1,72 +1,22 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import userProfile from "../assets/boy.png";
-import CreateButton from "./CreateButton";
 import close from "../assets/close.png";
-import axios from "axios";
+import { TripContext } from "../context/TripContext";
 function CreatePopup() {
-  const [isPopup, setPopup] = useState(false);
-  const [image, setImage] = useState("");
-  const [place, setPlace] = useState("");
-  const [details, setDetails] = useState("");
-  const [date, setDate] = useState("");
+  const {
+    isPopup,
+    setDate,
 
-  function openPopup() {
-    setPopup(true);
-  }
-  function closePopup() {
-    setPopup(false);
-  }
+    place,
 
-  const handleAddImage = async (e) => {
-    try {
-      const image = e.target.files[0];
-      if (!image) return;
-
-      const formData = new FormData();
-      formData.append("file", image);
-      formData.append("upload_preset", "Trip_plan_imges");
-      const { data } = await axios.post(
-        "https://api.cloudinary.com/v1_1/dtcjm5qss/image/upload",
-        formData
-      );
-
-      setImage(data.secure_url);
-      console.log("uploadedImage", data);
-    } catch (error) {
-      console.log(error, "Error from adding image trip front");
-    }
-  };
-
-  const handleCreateTrip = async () => {
-    if (!image || !place || !details) {
-      console.log("All fields are required");
-      return;
-    }
-    const createdTrip = {
-      image: image,
-      place,
-      details,
-      date,
-    };
-    const token = localStorage.getItem("token");
-    try {
-      const { data } = await axios.post(
-        "http://localhost:4000/api/trip/createtrip",
-        createdTrip,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          "Content-Type": "application/json",
-        }
-      );
-      console.log(data.newTrip);
-      setImage("");
-      setPlace("");
-      setDetails("");
-      closePopup();
-    } catch (error) {
-      console.log(error, "Error from Creating trip front");
-    }
-  };
+    details,
+    date,
+    setDetails,
+    closePopup,
+    handleAddImage,
+    handleCreateTrip,
+    setPlace,
+  } = useContext(TripContext);
 
   return (
     <>
@@ -122,7 +72,6 @@ function CreatePopup() {
           </div>
         </div>
       )}
-      <CreateButton openPopup={openPopup} />
     </>
   );
 }

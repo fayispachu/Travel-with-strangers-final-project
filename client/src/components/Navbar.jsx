@@ -1,20 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import userimage from "../assets/userimg.avif";
 import menu from "../assets/down.png";
 import Sidebar from "./Sidebar";
 import Userloginsetup from "./Userloginsetup";
 import { Link } from "react-router-dom";
+import { UserContext } from "../context/UserContext";
 function Navbar() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  function toggleSidebar() {
-    setSidebarOpen((prev) => !prev);
-    console.log("Sidebar is open");
-  }
-
+  const { toggleSidebar } = useContext(UserContext);
   return (
     <>
-      <div className="bg-black/40   w-[100%] md:py-2 py-3 flex flex-row pl-5 md:pl-10 overflow-hidden  items-center gap-[45%]  md:gap-28">
+      <div className="bg-black/40 absolute z-50  w-[100%] md:py-2 py-3 flex flex-row pl-5 md:pl-10 overflow-hidden  items-center gap-[45%]  md:gap-28">
         <h1 className="text-white font-[Poppins] font-bold text-lg md:text-2xl">
           Travel guys
         </h1>
@@ -52,7 +47,7 @@ function Navbar() {
         </div>
         <Userloginsetup />
       </div>
-      <Sidebar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
+      <Sidebar />
     </>
   );
 }

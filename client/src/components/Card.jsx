@@ -21,7 +21,7 @@ function Card() {
   return (
     <>
       {isOpen && (
-        <div className="md:bg-white flex flex-col absolute bg-gray-200 md:w-[50%] w-[100%] h-[100vh] md:h-[60vh] items-center justify-center  md:left-[50%] md:right-12 md:top-56 top-0 left-0 ">
+        <div className=" flex flex-col absolute  md:w-[50%] w-[100%] h-[100vh] md:h-[60vh] items-center justify-center  md:left-[50%] md:right-12 md:top-56 top-0 left-0 ">
           <img
             onClick={handleClose}
             className="md:hidden absolute top-4 right-4"

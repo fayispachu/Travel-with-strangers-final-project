@@ -1,6 +1,7 @@
-const { User } = require("../models/userAuthentication.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { User } = require("../models/userAuthentication.model");
+
 const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -47,4 +48,60 @@ const getProfileFromtoken = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginData, getProfileFromtoken };
+const getAllUsers = async (req, res) => {
+  try {
+    const { name } = req.query;
+    const query = name ? { name: { $regex: name, $options: "i" } } : {};
+    const users = await User.find(query).select("-password");
+    return res.status(200).json({ msg: "All usesr get success", users });
+  } catch (error) {
+    console.log(error, "error from get all user backend");
+  }
+};
+
+const setProfile = async (req, res) => {
+  // const { imageUrl, userId } = req.body;
+  const { profilepic } = req.body.profile;
+
+  try {
+    if (req.user) {
+      const updateProfile = await User.findByIdAndUpdate(
+        req.user._id,
+        { profileImage: profilepic },
+        { new: true }
+      );
+      return res.json({
+        success: true,
+        message: "User profile pic updated",
+        data: updateProfile,
+      });
+    }
+    // if (req.agency) {
+    //   const updateProfile = await User.findByIdAndUpdate(
+    //     req.agency._id,
+    //     { profileImage: profilepic },
+    //     { new: true }
+    //   );
+    //   return res.json({
+    //     success: true,
+    //     message: "Agency profile pic updated",
+    //     data: updateProfile,
+    //   });
+    // }
+
+    return res
+      .status(200)
+      .json({ msg: "Profile set successfully", updateProfile });
+  } catch (error) {
+    console.log(error, "error from backend profile image set");
+    return res.status(500).json({ msg: "Error from backend setProfile" });
+  }
+};
+
+module.exports = {
+  registerUser,
+  loginData,
+  getProfileFromtoken,
+  getAllUsers,
+  setProfile,
+};

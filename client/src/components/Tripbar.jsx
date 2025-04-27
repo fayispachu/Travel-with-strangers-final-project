@@ -4,32 +4,42 @@ import tempplace from "../assets/tempplace.jpeg";
 import { TripContext } from "../context/TripContext";
 
 function Tripbar() {
-  const { trips, handleOneTrip, handleOpen, searchTerm, filteredTrip } =
+  const { trips, handleOneTrip, handleOpen, searchTerm } =
     useContext(TripContext);
+
   return (
     <>
       {trips.length === 0 && (
-        <p className="font-bolt text-red-800">No trips found"{searchTerm}"</p>
+        <p className="text-center text-red-800 font-bold">
+          No trips found for "{searchTerm}"
+        </p>
       )}
 
-      <div className="flex flex-col md:items-start items-center md:gap-6 md:ml-10 gap-3 overflow-y-scroll overflow-x-hidden md:p-2 p-1 md:h-[60vh]  h-[33vh]">
-        {filteredTrip.map((trips, index) => (
+      <div className="flex  flex-col items-center md:items-start rounded-md md:ml-10 bg-white overflow-y-auto scrollbar-hidden p-2 h-[33vh] md:h-[60vh]">
+        {trips.map((trip, index) => (
           <div
             key={index}
             onClick={async () => {
-              await handleOneTrip(trips._id), handleOpen();
+              await handleOneTrip(trip._id);
+              handleOpen();
             }}
-            className=" md:w-96 w-[95%]  md:h-[15vh] md:gap-5 gap-3 flex flex-row items-center rounded-md drop-shadow-lg pr-4 bg-white "
+            className="w-full h-24 max-w-md flex items-center gap-4 p-2  bg-white rounded-md    cursor-pointer hover:shadow-lg transition-shadow duration-200"
           >
             <img
-              className="w-[30%]  h-full rounded-l-md"
-              src={trips?.image || tempplace}
-              alt=""
-            />{" "}
-            <p>{trips?.date}</p>
-            <h1 className="font-bold text-sm md:text-md">{trips?.place}</h1>
-            <p>{trips?.details}</p>
-            <img src={rightarrow} alt="" />
+              className="h-20 w-28  rounded-md"
+              src={trip?.image || tempplace}
+              alt="Trip"
+            />
+            <div className="flex-1 p-2 flex flex-col gap-1 overflow-hidden">
+              <p className="text-xs text-gray-500">{trip?.date}</p>
+              <h1 className="text-sm md:text-md font-bold truncate">
+                {trip?.place}
+              </h1>
+              <p className="text-sm text-gray-700 line-clamp-2">
+                {trip?.details}
+              </p>
+            </div>
+            <img className="w-4 h-4 md:w-6 md:h-6" src={rightarrow} alt=">" />
           </div>
         ))}
       </div>

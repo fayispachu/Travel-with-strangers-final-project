@@ -1,9 +1,12 @@
 const mongoose = require("mongoose");
+
 const userAuthenticationSchema = {
-  profile: String,
+  profileImage: { type: String, default: "" },
   name: String,
   email: String,
   password: String,
 };
-const User = mongoose.model("user", userAuthenticationSchema);
+
+const User = mongoose.model("User", userAuthenticationSchema);
+
 module.exports = { User };
