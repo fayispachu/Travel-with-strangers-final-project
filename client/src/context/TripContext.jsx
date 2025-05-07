@@ -86,7 +86,6 @@ export const TripProvider = ({ children }) => {
       console.log(data.searchTrips);
       if (data.allTrips.length > 0) {
         setOneTrip(data.allTrips[0]);
-        setIsOpen(true);
       }
       console.log(data.allTrips);
     } catch (error) {
@@ -130,8 +129,6 @@ export const TripProvider = ({ children }) => {
     setIsOpen(true);
   };
 
-
-
   function handleOpenYourSaved() {
     setYourSaved(true);
   }
@@ -167,7 +164,6 @@ export const TripProvider = ({ children }) => {
         trips,
       }}
     >
-      {children}
-    </TripContext.Provider>
+      {children}    </TripContext.Provider>
   );
 };

@@ -1,64 +1,57 @@
 import { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import googleicon from "../assets/google.png";
 import facebookicon from "../assets/facebook.png";
+
 function Register() {
   const [role, setRole] = useState("user");
   const [name, setName] = useState("");
   const [agencyName, setAgencyName] = useState("");
-
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async () => {
     try {
       if (role === "user") {
         const { data } = await axios.post(
           "http://localhost:4000/api/user/create",
-          {
-            name,
-            email,
-            password,
-          }
+          { name, email, password }
         );
         console.log("User registered: ", data);
       } else {
         const { data } = await axios.post(
           "http://localhost:4000/api/agency/register",
-          {
-            agencyName: agencyName,
-            email,
-            phone,
-            password,
-          }
+          { agencyName, email, phone, password }
         );
+        alert(`User registered: ${data.msg}`);
 
         console.log("Agency registered success:", data);
       }
+      navigate("/login");
     } catch (error) {
-      console.log(error, "Error in register component, or user already exist");
+      alert("User register faild");
+
+      console.log(error, "Error in register component, or user already exists");
     }
   };
-  const validateEmail = (email) => {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(email);
-  };
 
-  const validatePassword = (password) => {
-    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d).{5,}$/;
-    return passwordRegex.test(password);
-  };
+  const validateEmail = (email) =>
+    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
 
-  const handleLogin = (e) => {
+  const validatePassword = (password) =>
+    /^(?=.*[a-zA-Z])(?=.*\d).{5,}$/.test(password);
+
+  const handleRegister = (e) => {
     e.preventDefault();
     setError("");
 
     if (!validateEmail(email)) {
-      setError("Please enter a valid email with '@'.");
+      setError("Please enter a valid email.");
       return;
     }
 
@@ -68,106 +61,123 @@ function Register() {
       );
       return;
     }
+
     handleSubmit();
   };
+
+  const toggleRole = () =>
+    setRole((prev) => (prev === "user" ? "agency" : "user"));
+
   return (
-    <>
-      <div className="flex justify-center py-14 items-center bg-gray-100">
-        <div className="drop-shadow-xl w-[80%] h-[80vh] bg-white flex flex-row">
-          {/* Left Panel */}
-          <section className="bg-[#33D69F] w-[50%] h-full text-center flx items-center justify-center flex-col py-24">
-            <h1 className="font-bold text-4xl text-white drop-shadow-2xl">
-              Welcome
-            </h1>
-            <p>
-              This application allows users or agencies to register and connect
-              through trips
-            </p>
-          </section>
+    <div className="flex justify-center w-full h-screen py-14 items-center bg-gray-100">
+      <div className="drop-shadow-xl w-[90%] md:h-[80vh] h-auto bg-white flex flex-col md:flex-row">
+        {/* Left Side */}
+        <section
+          className={`w-full md:w-[50%] h-[200px] md:h-full text-center flex items-center justify-center flex-col py-24 ${
+            role === "agency"
+              ? "bg-white text-[#33D69F]"
+              : "bg-[#33D69F] text-white"
+          }`}
+        >
+          <h1 className="font-bold text-4xl drop-shadow-2xl">
+            {role === "agency" ? "Agency Register" : "Welcome"}
+          </h1>
+          <p className="px-4 mt-2 text-sm">
+            {role === "agency"
+              ? "Register your agency to host travel packages."
+              : "Sign up to join and explore trips with others."}
+          </p>
+        </section>
 
-          {/* Right Panel */}
-          <section className="bg-white w-[50%] h-full flex flex-col items-center justify-center gap-3">
-            <h1 className="text-[#33D69F] font-bold text-2xl mb-2">Register</h1>
+        {/* Right Side */}
+        <section
+          className={`w-full md:w-[50%] h-full flex flex-col items-center justify-center gap-3 ${
+            role === "agency"
+              ? "bg-[#33D69F] text-white"
+              : "bg-white text-black"
+          }`}
+        >
+          <button
+            onClick={toggleRole}
+            className={`self-end rounded-l-full px-5 py-2 font-semibold border ${
+              role === "agency"
+                ? "bg-white text-[#33D69F] border-white"
+                : "bg-[#33D69F] text-white border-[#33D69F]"
+            }`}
+          >
+            {role === "agency" ? "User" : "Agency"}
+          </button>
 
-            {/* Role Selector */}
-            <div className="mb-3">
-              <label className="mr-2">Register as:</label>
-              <select
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
-                className="border border-[#33D69F] px-3 py-1"
-              >
-                <option value="user">User</option>
-                <option value="agency">Agency</option>
-              </select>
-            </div>
+          <h1 className="font-bold text-2xl mb-4">
+            Register as {role === "agency" ? "Agency" : "User"}
+          </h1>
 
-            {/* Conditional Inputs */}
-            {role === "user" ? (
-              <input
-                value={name || agencyName}
-                onChange={(e) => setName(e.target.value)}
-                type="text"
-                placeholder="Name"
-                className="px-11 py-3 border border-[#33D69F]"
-              />
-            ) : (
-              <>
-                <input
-                  value={agencyName}
-                  onChange={(e) => setAgencyName(e.target.value)}
-                  type="text"
-                  placeholder="Agency Name"
-                  className="px-11 py-3 border border-[#33D69F]"
-                />
-                <input
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  type="text"
-                  placeholder="Phone Number"
-                  className="px-11 py-3 border border-[#33D69F]"
-                />
-              </>
-            )}
-
+          {role === "user" ? (
             <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               type="text"
-              placeholder="Email"
-              className="px-11 py-3 border border-[#33D69F]"
+              placeholder="Name"
+              className="px-11 py-3 border border-[#33D69F] text-black"
             />
-            <input
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              type=""
-              placeholder="Password"
-              className="px-11 py-3 border border-[#33D69F]"
-            />
+          ) : (
+            <>
+              <input
+                value={agencyName}
+                onChange={(e) => setAgencyName(e.target.value)}
+                type="text"
+                placeholder="Agency Name"
+                className="px-11 py-3 border border-[#33D69F] text-black"
+              />
+              <input
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                type="text"
+                placeholder="Phone Number"
+                className="px-11 py-3 border border-[#33D69F] text-black"
+              />
+            </>
+          )}
 
-            {/* Icons */}
-            <div className="flex flex-row gap-5">
-              <img className="w-7" src={googleicon} alt="Google" />
-              <img className="w-7" src={facebookicon} alt="Facebook" />
-            </div>
+          <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            placeholder="Email"
+            className="px-11 py-3 border border-[#33D69F] text-black"
+          />
+          <input
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            type="password"
+            placeholder="Password"
+            className="px-11 py-3 border border-[#33D69F] text-black"
+          />
 
-            {/* Submit Button */}
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+          <div className="flex flex-row gap-5 mt-2">
+            <img className="w-7" src={googleicon} alt="Google" />
+            <img className="w-7" src={facebookicon} alt="Facebook" />
+          </div>
 
-            <button
-              onClick={handleLogin}
-              className="bg-[#33D69F] px-[20%] py-3 font-semibold border border-[#33D69F]"
-            >
-              Submit
-            </button>
+          {error && <p className="text-red-500 text-sm">{error}</p>}
 
-            <Link to="/login">
-              <h1>Already have an account? Log in</h1>
-            </Link>
-          </section>
-        </div>
+          <button
+            onClick={handleRegister}
+            className={`mt-2 px-[20%] py-3 font-semibold border ${
+              role === "agency"
+                ? "bg-white text-[#33D69F] border-white"
+                : "bg-[#33D69F] text-white border-[#33D69F]"
+            }`}
+          >
+            Submit
+          </button>
+
+          <Link to="/login">
+            <h1 className="underline mt-2">Already have an account? Log in</h1>
+          </Link>
+        </section>
       </div>
-    </>
+    </div>
   );
 }
 

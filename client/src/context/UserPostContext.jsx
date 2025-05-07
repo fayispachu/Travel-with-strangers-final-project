@@ -40,6 +40,8 @@ export const PostProvider = ({ children }) => {
     };
     const token = localStorage.getItem("token");
     try {
+      // "http://192.168.29.195:4000/api/trip/createpost",
+
       const { data } = await axios.post(
         "http://localhost:4000/api/trip/createpost",
         createdpost,

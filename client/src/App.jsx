@@ -9,34 +9,39 @@ import Profile from "./pages/Profile";
 import { TripProvider } from "./context/TripContext";
 import { UsersDetailsProvider } from "./context/UserContext";
 import { PostProvider } from "./context/UserPostContext";
-import { AgencyDetailsProvider } from "./context/AgencyContext";
 import ProtectedRouter from "./components/ProtectedRouter";
+import ForgotPassword from "./components/ForgotPassword";
+import ResetPassword from "./components/ResetPassword ";
 function App() {
   return (
     <>
       <PostProvider>
         <TripProvider>
           <UsersDetailsProvider>
-            <AgencyDetailsProvider>
-              <BrowserRouter>
-                <Routes>
-                  <Route path="/admin/fayis" element={<AdminLogin />} />
-                  <Route path="/admin" element={<AdminDashboard />} />
-                  <Route
-                    path="/profile"
-                    element={
-                      <ProtectedRouter>
-                        <Profile />
-                      </ProtectedRouter>
-                    }
-                  />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/admin/fayis" element={<AdminLogin />} />
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRouter>
+                      <Profile />
+                    </ProtectedRouter>
+                  }
+                />
 
-                  <Route path="/" element={<Home />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/login" element={<Login />} />
-                </Routes>
-              </BrowserRouter>
-            </AgencyDetailsProvider>
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route
+                  path="/reset-password/:token"
+                  element={<ResetPassword />}
+                />
+
+                <Route path="/" element={<Home />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+              </Routes>
+            </BrowserRouter>
           </UsersDetailsProvider>
         </TripProvider>
       </PostProvider>

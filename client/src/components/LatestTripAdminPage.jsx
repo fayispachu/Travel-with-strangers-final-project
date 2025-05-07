@@ -1,11 +1,9 @@
 import React from "react";
 
 function LatestTripAdminPage() {
-
-
   return (
     <>
-      <div className="bg-white  w-[90%] h-[70vh] ml-16 px-7">
+      <div className="bg-white  w-[90%] h-[70vh] ml-16 px-7 transition-all">
         <div className="flex flex-row  justify-between items-center px-5  py-3 ">
           <h1 className="font-bold text-xl  ">Recent trips</h1>
           <div className="flex flex-row items-center">

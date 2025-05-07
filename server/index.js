@@ -1,7 +1,6 @@
 const express = require("express");
 
 const app = express();
-const port = 4000;
 
 const cors = require("cors");
 app.use(cors());
@@ -19,12 +18,10 @@ mongoose
   });
 
 const { tripRouter, userRouter } = require("./routes/user.route");
-const { agenciesRouter } = require("./routes/agencies.routes");
 
 app.use("/api/user", userRouter);
 app.use("/api/trip", tripRouter);
-app.use("/api/agency", agenciesRouter);
 
-app.listen(port, () => {
-  console.log(`Server running on port http://localhost:4000`);
+app.listen(4000, () => {
+  console.log("Server running on port 4000");
 });

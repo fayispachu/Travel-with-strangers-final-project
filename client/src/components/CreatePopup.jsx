@@ -1,14 +1,13 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import userProfile from "../assets/boy.png";
 import close from "../assets/close.png";
 import { TripContext } from "../context/TripContext";
+
 function CreatePopup() {
   const {
     isPopup,
     setDate,
-
     place,
-
     details,
     date,
     setDetails,
@@ -18,38 +17,71 @@ function CreatePopup() {
     setPlace,
   } = useContext(TripContext);
 
+  const [previewImage, setPreviewImage] = useState(null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPreviewImage(URL.createObjectURL(file));
+      handleAddImage(e);
+    }
+  };
+
   return (
     <>
       {isPopup && (
-        <div className="md:flex z-50 md:top-20 top-16  bg-white/70 w-[100%] h-[90vh] absolute items-center flex-col justify-center  rounded-md  ">
-          <img
-            className="absolute right-10 top-10"
-            onClick={closePopup}
-            src={close}
-            alt="close"
-          />
-          <div className="md:w-96 w-[80%] bg-white md:h-[60vh] h-[50vh]  mt-32 mx-10 rounded-md drop-shadow-xl gap-3 flex flex-col md:p-6 px-5 py-4   ">
-            <div className=" flex flex-row items-start gap-2">
-              <img className="" src={userProfile} alt="add image" />
+        <div className="fixed inset-0 z-50 text-black bg-white/70 flex justify-center items-center px-4 py-6 overflow-y-auto">
+          <div className="relative w-full max-w-md bg-white rounded-md shadow-xl p-5">
+            <img
+              className="absolute right-4 top-4 w-6 h-6 cursor-pointer"
+              onClick={closePopup}
+              src={close}
+              alt="close"
+            />
+
+            {/* User Info */}
+            <div className="flex items-center gap-3 mb-4">
+              <img
+                className="w-10 h-10 rounded-full"
+                src={userProfile}
+                alt="user"
+              />
               <h1 className="font-bold text-lg">Fayiz.k</h1>
             </div>
-            <input
-              type="file"
-              onChange={handleAddImage}
-              className="md:w-[100%]  md:h-36 h-24 rounded-md"
-              placeholder="Add image"
-              alt=""
-            />
-            <div className="flex flex-col items-start gap-2 ">
+
+            {/* Form Inputs */}
+            <div className="flex flex-col gap-3">
+              {/* Custom Image Upload Field */}
+              <label className="w-full h-48 hover:scale-105 transition-all bg-gray-100 border-dashed border-2 border-gray-300 rounded-md flex items-center justify-center cursor-pointer overflow-hidden relative">
+                {!previewImage && (
+                  <div className="flex flex-col items-center text-gray-500">
+                    <span className="text-sm">Add Image</span>
+                  </div>
+                )}
+                {previewImage && (
+                  <img
+                    src={previewImage}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                  />
+                )}
+                <input
+                  type="file"
+                  onChange={handleImageChange}
+                  className="absolute inset-0 opacity-0 placeholder-black cursor-pointer"
+                />
+              </label>
+
               <input
                 onChange={(e) => setPlace(e.target.value)}
-                className="font-bold md:text-lg  border"
+                className="border rounded-md p-2 font-semibold placeholder-black"
                 value={place}
-                placeholder="place name"
+                placeholder="Place name"
               />
+
               <input
                 onChange={(e) => setDate(e.target.value)}
-                className="font-bold md:text-lg  border"
+                className="border rounded-md p-2 font-semibold"
                 value={date}
                 type="date"
                 placeholder="Date"
@@ -57,14 +89,14 @@ function CreatePopup() {
 
               <input
                 onChange={(e) => setDetails(e.target.value)}
-                className="border"
+                className="border rounded-md p-2 placeholder-black"
                 value={details}
-                placeholder="details"
+                placeholder="Details"
               />
 
               <button
                 onClick={handleCreateTrip}
-                className="px-5 py-3 text-white bg-black rounded-md"
+                className="bg-black text-white rounded-md py-2 px-4 mt-2"
               >
                 Submit
               </button>

@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { User } = require("../models/userAuthentication.model");
-
+const nodemailer = require("nodemailer");
 const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -12,11 +12,15 @@ const registerUser = async (req, res) => {
     }
     const hashedPass = await bcrypt.hash(password, 10);
     const newUser = await User.create({ name, email, password: hashedPass });
+    console.log("Saving user:", newUser);
+
     return res
       .status(201)
       .json({ msg: "Register successffull", User: newUser });
   } catch (error) {
     console.log("Error in register backend", error);
+
+    return res.status(400).json({ msg: "Register faild ", error });
   }
 };
 
@@ -60,14 +64,13 @@ const getAllUsers = async (req, res) => {
 };
 
 const setProfile = async (req, res) => {
-  // const { imageUrl, userId } = req.body;
-  const { profilepic } = req.body.profile;
+  const { imageUrl, userId } = req.body;
 
   try {
     if (req.user) {
       const updateProfile = await User.findByIdAndUpdate(
         req.user._id,
-        { profileImage: profilepic },
+        { profileImage: imageUrl },
         { new: true }
       );
       return res.json({
@@ -97,8 +100,55 @@ const setProfile = async (req, res) => {
     return res.status(500).json({ msg: "Error from backend setProfile" });
   }
 };
+const forgotpassword = async (req, res) => {
+  try {
+    console.log("Request body:", req.body); // Log the request body
+
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ msg: "Email is required" });
+    }
+
+    const checkUser = await User.findOne({ email });
+    if (!checkUser) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+
+    console.log("User found:", checkUser);
+
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    console.log("Generated token:", token);
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.MY_GMAIL,
+        pass: process.env.MY_PASS,
+      },
+    });
+
+    const receiver = {
+      from: process.env.MY_GMAIL,
+      to: email,
+      subject: "Password Reset Request",
+      text: `Click on this link to reset your password: ${process.env.CLIENT_URL}/${token}`,
+    };
+
+    console.log("Sending email to:", email);
+
+    await transporter.sendMail(receiver);
+    return res.status(200).json({ msg: "Password reset email sent" });
+  } catch (error) {
+    console.log(error, "Error in forgotpassword");
+    return res.status(500).json({ msg: "Internal server error" });
+  }
+};
 
 module.exports = {
+  forgotpassword,
   registerUser,
   loginData,
   getProfileFromtoken,

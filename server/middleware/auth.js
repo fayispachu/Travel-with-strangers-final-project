@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 
 const { User } = require("../models/userAuthentication.model");
-const { AgenciesAuth } = require("../models/Agencies.model");
 const authenticateUser = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
@@ -18,12 +17,6 @@ const authenticateUser = async (req, res, next) => {
       if (user) {
         req.user = user;
 
-        return next();
-      }
-
-      const agency = await AgenciesAuth.findById(decodedToken.id);
-      if (agency) {
-        req.agency = agency;
         return next();
       }
     });

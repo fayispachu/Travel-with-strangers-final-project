@@ -3,66 +3,39 @@ import tempPlace from "../assets/tempplace.jpeg";
 
 function MostVisitedPlace() {
   return (
-    <>
-      <div
-        id="mostvisited"
-        className="flex overflow-hidden flex-col w-[100%] md:h-screen  h-full items-center justify-center bg-[#c2f8e6] "
-      >
-        {" "}
-        <h1 className="font-bold text-2xl ">Most Visited Places</h1>{" "}
-        <div className="flex  flex-col md:flex-row  md:gap-16 gap-5  py-14  items-center justify-center  ">
-          {" "}
-          <div className="md:w-72  md:h-[60vh] w-[95%] h-[20vh]  gap-5 flex md:flex-col flex-row items-center rounded-md drop-shadow-lg  bg-white  ">
+    <div
+      id="mostvisited"
+      className="flex flex-col w-full items-center justify-center bg-[#33D69F]  py-10 px-4"
+    >
+      <h1 className="font-bold text-xl md:text-2xl mb-6 text-center">
+        Most Visited Places
+      </h1>
+
+      <div className="flex flex-col md:flex-row gap-6 md:gap-10 w-full max-w-6xl items-center justify-center">
+        {[1, 2, 3].map((_, i) => (
+          <div
+            key={i}
+            className="flex flex-row md:flex-col bg-white rounded-md shadow-md overflow-hidden w-full md:w-72 h-[110px] md:h-[60vh]"
+          >
             <img
-              className="md:w-full md:h-[30vh] h-full w-[40%] md:rounded-t-md "
               src={tempPlace}
-              alt=""
+              alt="place"
+              className="w-[40%] h-full object-cover md:w-full md:h-[30vh] md:rounded-t-md"
             />
-            <div className="flex items-start flex-col py-5 px-2">
-              {" "}
-              <h1 className="font-bold text-md">Kashmir</h1>
-              <p>10/20/25 to 20/20/25</p>
-              <p>
-                Exploring Srinagar, Gulmarg, Pahalgam & Sonmarg—snowy peaks,
-                lakes & adventure!
+            <div className="flex flex-col justify-center md:justify-start p-3 text-left w-[60%] md:w-full">
+              <h2 className="font-semibold text-sm md:text-lg">Kashmir</h2>
+              <p className="text-xs md:text-sm text-gray-600 mt-1">
+                10/20/25 to 20/20/25
+              </p>
+              <p className="text-[10px] md:text-sm text-gray-500 mt-1 leading-tight">
+                Srinagar, Gulmarg, Pahalgam & Sonmarg—snowy peaks, lakes &
+                adventure!
               </p>
             </div>
           </div>
-          <div className="md:w-72  md:h-[60vh] w-[95%] h-[20vh] gap-5 flex md:flex-col flex-row items-center rounded-md drop-shadow-lg  bg-white  ">
-            <img
-              className="md:w-full md:h-[30vh] h-full w-[40%] md:rounded-t-md "
-              src={tempPlace}
-              alt=""
-            />
-            <div className="flex items-start flex-col  py-10 px-2">
-              {" "}
-              <h1 className="font-bold text-md">Kashmir</h1>
-              <p>10/20/25 to 20/20/25</p>
-              <p>
-                Exploring Srinagar, Gulmarg, Pahalgam & Sonmarg—snowy peaks,
-                lakes & adventure!
-              </p>
-            </div>
-          </div>
-          <div className="md:w-72  md:h-[60vh] w-[95%] h-[20vh]  gap-5 flex md:flex-col flex-row items-center rounded-md drop-shadow-lg  bg-white">
-            <img
-              className="md:w-full md:h-[30vh] h-full w-[40%] md:rounded-t-md "
-              src={tempPlace}
-              alt=""
-            />
-            <div className="flex items-start flex-col  py-10 px-2">
-              {" "}
-              <h1 className="font-bold text-md">Kashmir</h1>
-              <p>10/20/25 to 20/20/25</p>
-              <p>
-                Exploring Srinagar, Gulmarg, Pahalgam & Sonmarg—snowy peaks,
-                lakes & adventure!
-              </p>
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
-    </>
+    </div>
   );
 }
 

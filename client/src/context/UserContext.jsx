@@ -33,9 +33,11 @@ export const UsersDetailsProvider = ({ children }) => {
     getUser();
   }, [searchUser]);
 
-  function toggleSidebar() {
-    setSidebarOpen((prev) => !prev);
-    console.log("Sidebar is open");
+  function OpenSidebar() {
+    setSidebarOpen(true);
+  }
+  function CloseSidebar() {
+    setSidebarOpen(false);
   }
 
   const checkUser = async () => {
@@ -54,8 +56,8 @@ export const UsersDetailsProvider = ({ children }) => {
       );
       if (data.doc) {
         setUser(data.doc);
+        console.log(data.doc, "check profile fetched");
       }
-      console.log(data.doc, "check profile fetched");
     } catch (error) {
       console.log(error, "errror from user check faild");
       setUser(null);
@@ -82,6 +84,8 @@ export const UsersDetailsProvider = ({ children }) => {
       }
       const imageUrl = data.secure_url;
       setProfile(imageUrl);
+      console.log(imageUrl, "image url aane");
+
       if (!data) return alert("Data illada ponilla profile");
       console.log(data.secure_url);
 
@@ -119,7 +123,8 @@ export const UsersDetailsProvider = ({ children }) => {
     <UserContext.Provider
       value={{
         sidebarOpen,
-        toggleSidebar,
+        OpenSidebar,
+        CloseSidebar,
         users,
         profile,
         setProfilepic,

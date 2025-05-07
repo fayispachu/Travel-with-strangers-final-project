@@ -125,7 +125,24 @@ const getOneTrip = async (req, res) => {
   }
 };
 
+const DeleteTrip = async (req, res) => {
+  try {
+    const id = req.params.id;
+    console.log("Deleting trip with ID:", id);
+    const deletedTrip = await CreateTrip.findByIdAndDelete(id);
+    if (!deletedTrip) {
+      return res.status(404).json({ msg: "Trip not found" });
+    }
+    return res.status(200).json({ msg: "Trip deleted", deletedTrip });
+  } catch (error) {
+    console.log("Error deleting trip:", error);
+    return res.status(500).json({ msg: "Server error during deletion" });
+  }
+};
+
+
 module.exports = {
+  DeleteTrip,
   createTrip,
   getAllTrips,
   getOneTrip,
