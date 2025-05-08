@@ -9,7 +9,8 @@ function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const loginData = async () => {
+  const loginData = async (e) => {
+    e.preventDefault();
     try {
       const endpoint = "http://localhost:4000/api/user/login";
       const payload = { email, password };
@@ -31,7 +32,9 @@ function Login() {
         {/* Left Side */}
         <section className="w-full md:w-[50%] h-[200px] md:h-full text-center flex items-center justify-center flex-col py-24 bg-[#33D69F] text-white">
           <h1 className="font-bold text-4xl drop-shadow-2xl">Welcome</h1>
-          <p className="px-4 mt-2 text-sm">This app lets you travel with strangers.</p>
+          <p className="px-4 mt-2 text-sm">
+            This app lets you travel with strangers.
+          </p>
         </section>
 
         {/* Right Side */}
@@ -67,8 +70,10 @@ function Login() {
           >
             Submit
           </button>
+          <Link to="/forgot-password" className="underline text-sm">
+            <p className="mt-3 underline cursor-pointer">Forgot password?</p>
+          </Link>
 
-          <p className="mt-3 underline cursor-pointer">Forgot password?</p>
           <Link to="/register">
             <h1 className="underline">Sign Up</h1>
           </Link>

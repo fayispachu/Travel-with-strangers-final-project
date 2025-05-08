@@ -17,7 +17,8 @@ const {
   getProfileFromtoken,
   getAllUsers,
   setProfile,
-  forgotpassword,
+  forgotPassword,
+  resetPassword,
 } = require("../controller/userAuthentication.controller");
 
 const { authenticateUser } = require("../middleware/auth");
@@ -27,7 +28,8 @@ userRouter.post("/login", loginData);
 userRouter.get("/profile", authenticateUser, getProfileFromtoken);
 userRouter.get("/users", getAllUsers);
 userRouter.put("/update/profile", authenticateUser, setProfile);
-userRouter.post("/forgot-password", forgotpassword);
+userRouter.post("/forgot-password", forgotPassword);
+userRouter.post("/reset-password/:token", resetPassword);
 
 tripRouter.post(
   "/createtrip",
@@ -41,5 +43,9 @@ tripRouter.delete("/delete/:id", authenticateUser, DeleteTrip);
 
 tripRouter.get("/mytrip", authenticateUser, getMyTrip);
 tripRouter.post("/createpost", authenticateUser, UserPost);
+
+
+
+
 
 module.exports = { tripRouter, userRouter };
