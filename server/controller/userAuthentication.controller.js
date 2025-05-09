@@ -80,18 +80,7 @@ const setProfile = async (req, res) => {
         data: updateProfile,
       });
     }
-    // if (req.agency) {
-    //   const updateProfile = await User.findByIdAndUpdate(
-    //     req.agency._id,
-    //     { profileImage: profilepic },
-    //     { new: true }
-    //   );
-    //   return res.json({
-    //     success: true,
-    //     message: "Agency profile pic updated",
-    //     data: updateProfile,
-    //   });
-    // }
+   
 
     return res
       .status(200)
