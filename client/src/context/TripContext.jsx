@@ -19,13 +19,13 @@ export const TripProvider = ({ children }) => {
   const [date, setDate] = useState("");
   const [yourSaved, setYourSaved] = useState(false);
   const [saveTrip, setSaveTrip] = useState([]);
-
+const URL = "https://travel-with-strangers-final-project.onrender.com"
   // save trip
   const handleSaveTrip = async (tripId) => {
     const token = localStorage.getItem("token");
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/api/user/save-trip",
+        `${URL}/api/user/save-trip`,
         { tripId },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -45,7 +45,7 @@ export const TripProvider = ({ children }) => {
     const token = localStorage.getItem("token");
     try {
       const { data } = await axios.get(
-        "http://localhost:4000/api/user/get-savedtrips",
+        `${URL}/api/user/get-savedtrips`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -97,7 +97,7 @@ export const TripProvider = ({ children }) => {
     const token = localStorage.getItem("token");
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/api/trip/createtrip",
+        `${URL}/api/trip/createtrip`,
         createdTrip,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -118,7 +118,7 @@ export const TripProvider = ({ children }) => {
   const handleGetTrips = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:4000/api/trip/alltrips?place=${searchTerm}`
+        `${URL}/trip/alltrips?place=${searchTerm}`
       );
       setTrips(data.allTrips);
       setFilteredTrip(data.allTrips);
@@ -149,7 +149,7 @@ export const TripProvider = ({ children }) => {
 
     try {
       const { data } = await axios.get(
-        `http://localhost:4000/api/trip/onetrip?id=${id}`
+        `${URL}/api/trip/onetrip?id=${id}`
       );
       setOneTrip(data.trip);
     } catch (error) {

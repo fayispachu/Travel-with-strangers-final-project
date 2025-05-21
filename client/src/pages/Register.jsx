@@ -11,13 +11,16 @@ function Register() {
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
+  const URL = "https://travel-with-strangers-final-project.onrender.com";
 
   const handleSubmit = async () => {
+    
     try {
-      const { data } = await axios.post(
-        "http://localhost:4000/api/user/create",
-        { name, email, password }
-      );
+      const { data } = await axios.post(`${URL}/api/user/create`, {
+        name,
+        email,
+        password,
+      });
       console.log("User registered: ", data);
       navigate("/login");
     } catch (error) {

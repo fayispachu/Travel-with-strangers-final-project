@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import googleicon from "../assets/google.png";
 import facebookicon from "../assets/facebook.png";
 import axios from "axios";
+// const URL = "http://localhost:4000"
+const URL = "https://travel-with-strangers-final-project.onrender.com"
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -12,7 +14,7 @@ function Login() {
   const loginData = async (e) => {
     e.preventDefault();
     try {
-      const endpoint = "http://localhost:4000/api/user/login";
+      const endpoint = `${URL}/api/user/login`;
       const payload = { email, password };
 
       const { data } = await axios.post(endpoint, payload);
