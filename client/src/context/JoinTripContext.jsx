@@ -15,13 +15,13 @@ export const JoinTripProvider = ({ children }) => {
   const [joinedTrips, setJoinedTrips] = useState([]);
 
   const navigate = useNavigate();
-const URL = "https://travel-with-strangers-final-project.onrender.com"
+
   // Fetch joined trips from backend
   const handleGetJoinedTrips = async () => {
     const token = localStorage.getItem("token");
     try {
       const { data } = await axios.get(
-        `${URL}/api/chat/joined-trips`,
+        "http://localhost:4000/api/chat/joined-trips",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -58,7 +58,7 @@ const URL = "https://travel-with-strangers-final-project.onrender.com"
     const token = localStorage.getItem("token");
     try {
       const { data } = await axios.post(
-        `${URL}/api/chat/join`,
+        "http://localhost:4000/api/chat/join",
         { tripId: trip._id },
         {
           headers: { Authorization: `Bearer ${token}` },

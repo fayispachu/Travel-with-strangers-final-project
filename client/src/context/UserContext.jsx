@@ -14,11 +14,11 @@ export const UsersDetailsProvider = ({ children }) => {
   const [joinedUser, setJoinedUser] = useState(null);
 
   const token = localStorage.getItem("token");
-  const URL = "https://travel-with-strangers-final-project.onrender.com";
+
   const getUser = async () => {
     try {
       const { data } = await axios.get(
-        `${URL}/api/user/users?name=${searchUser}`,
+        `http://localhost:4000/api/user/users?name=${searchUser}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -41,9 +41,12 @@ export const UsersDetailsProvider = ({ children }) => {
     }
 
     try {
-      const { data } = await axios.get(`${URL}/api/user/profile`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const { data } = await axios.get(
+        "http://localhost:4000/api/user/profile",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       if (data.doc) {
         setUser(data.doc);
         console.log(data.doc, "User profile fetched");
@@ -84,7 +87,7 @@ export const UsersDetailsProvider = ({ children }) => {
       const token = localStorage.getItem("token");
 
       const res = await axios.put(
-        `${URL}/api/user/update/profile`,
+        `http://localhost:4000/api/user/update/profile`,
         { profilepic: imageUrl },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -111,9 +114,12 @@ export const UsersDetailsProvider = ({ children }) => {
     }
 
     try {
-      const { data } = await axios.get(`${URL}/api/user/joineduser`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const { data } = await axios.get(
+        "http://localhost:4000/api/user/joineduser",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       if (data.joinedUser) {
         setJoinedUser(data.joinedUser);
         console.log(data.joinedUser, "Joined user fetched");
