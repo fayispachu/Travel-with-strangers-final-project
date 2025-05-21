@@ -18,6 +18,45 @@ export const TripProvider = ({ children }) => {
   const [details, setDetails] = useState("");
   const [date, setDate] = useState("");
   const [yourSaved, setYourSaved] = useState(false);
+  const [saveTrip, setSaveTrip] = useState([]);
+
+  // save trip
+  const handleSaveTrip = async (tripId) => {
+    const token = localStorage.getItem("token");
+    try {
+      const { data } = await axios.post(
+        "http://localhost:4000/api/user/save-trip",
+        { tripId },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setSaveTrip(data.savedTrips);
+      alert("Trip saved successfully");
+      console.log(data.savedTrips);
+      console.log(saveTrip);
+    } catch (error) {
+      console.log("Save trip error:", error);
+      alert(error.response?.data?.msg || "Failed to save trip");
+    }
+  };
+  // get saved trip
+  const handleGetSavedTrips = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const { data } = await axios.get(
+        "http://localhost:4000/api/user/get-savedtrips",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      console.log("Saved trips data:", data);
+
+      setSaveTrip(data.savedTrips);
+    } catch (error) {
+      console.log("Failed to fetch saved trips", error);
+    }
+  };
 
   function openPopup() {
     setPopup(true);
@@ -83,11 +122,11 @@ export const TripProvider = ({ children }) => {
       );
       setTrips(data.allTrips);
       setFilteredTrip(data.allTrips);
-      console.log(data.searchTrips);
+      console.log(data.searchTrips, "get all trips");
       if (data.allTrips.length > 0) {
         setOneTrip(data.allTrips[0]);
       }
-      console.log(data.allTrips);
+      console.log(data.allTrips, "all trips ");
     } catch (error) {
       console.log("Error from frontend getAll Trips", error);
     }
@@ -104,24 +143,18 @@ export const TripProvider = ({ children }) => {
 
   const handleOneTrip = async (id) => {
     if (!id) {
-      console.log("undefined id");
+      console.error("Trip ID is missing");
+      return;
     }
-    // const token = localStorage.getItem("token");
 
     try {
-      const { data } = await axios.post(
+      const { data } = await axios.get(
         `http://localhost:4000/api/trip/onetrip?id=${id}`
-        // {
-        //   headers: { Authorization: `Bearer ${token}` },
-        //   "Content-Type": "application/json",
-        // }
       );
       setOneTrip(data.trip);
-      console.log(id);
-
-      console.log("fetched data : ", data.trip);
     } catch (error) {
-      console.log(error, "Error in Card getOneTrip");
+      console.warn("Trip not found");
+      console.error("Error fetching trip details:", error);
     }
   };
 
@@ -139,6 +172,10 @@ export const TripProvider = ({ children }) => {
   return (
     <TripContext.Provider
       value={{
+        saveTrip,
+
+        handleSaveTrip,
+        handleGetSavedTrips,
         yourSaved,
         handleCloseYourSaved,
         handleOpenYourSaved,
@@ -164,6 +201,7 @@ export const TripProvider = ({ children }) => {
         trips,
       }}
     >
-      {children}    </TripContext.Provider>
+      {children}{" "}
+    </TripContext.Provider>
   );
 };

@@ -1,6 +1,5 @@
 const { CreateTrip } = require("../models/createtrip.model");
-const { User } = require("../models/userAuthentication.model");
-const { CreateUserPost } = require("../models/userpost.mode");
+const { User } = require("../models/userauthentication.model");
 
 const createTrip = async (req, res) => {
   try {
@@ -29,44 +28,12 @@ const createTrip = async (req, res) => {
       createdAt: Date.now(),
       createdBy: req.user.id,
     });
-    console.log(newTrip);
+    console.log(newTrip, "Newtrip");
 
     res.status(201).json({ msg: "Successfully created Trip", newTrip });
   } catch (error) {
     console.log(error, "error in create trip backend");
     res.status(500).json({ msg: "create trip server error" });
-  }
-};
-
-const UserPost = async (req, res) => {
-  try {
-    const { image, description } = req.body;
-    if (!image || !description) {
-      return res
-        .status(400)
-        .json({ msg: "All fields are required from user post" });
-    }
-
-    const id = req.user.id;
-    const user = await User.findById(id);
-    if (!user) {
-      return res.status(400).json({ msg: "User not found from user post" });
-    }
-    const newPost = await CreateUserPost.create({
-      image,
-      description,
-      profile: user.profile,
-      name: user.name,
-      createdBy: req.user.id,
-      createdAt: Date.now,
-    });
-
-    console.log(newPost);
-
-    return res.status(201).json({ msg: "Post Created Successfully", newPost });
-  } catch (error) {
-    console.log(error, "error from backend user post ");
-    return res.status(500).json({ msg: "Error from userPost" });
   }
 };
 
@@ -109,19 +76,27 @@ const getMyTrip = async (req, res) => {
 const getOneTrip = async (req, res) => {
   try {
     const id = req.query.id;
+    console.log("Received trip id:", id); // Log the id to check if it's coming correctly
+
     if (!id) {
-      return res.status(404).json({ msg: "noooo id from backend " });
+      return res.status(404).json({ msg: "Trip ID not provided" });
     }
-    console.log(id);
+
     const trip = await CreateTrip.findById(id);
-    console.log(trip);
+
     if (!trip) {
-      return res.status(404).json({ msg: "Trip ton found" });
+      return res.status(400).json({ msg: "GetOne trip id is notfound" });
     }
+    console.log("Trip details:", trip);
+
+    if (!trip) {
+      return res.status(404).json({ msg: "Trip not found" });
+    }
+
     res.status(200).json({ msg: "Your Trip", trip });
   } catch (error) {
-    console.log(error, "error in backend gettrip");
-    res.status(500).json({ msg: "server error get one" });
+    console.log(error, "Error in backend getOneTrip");
+    res.status(500).json({ msg: "Server error while fetching the trip" });
   }
 };
 
@@ -140,12 +115,10 @@ const DeleteTrip = async (req, res) => {
   }
 };
 
-
 module.exports = {
   DeleteTrip,
   createTrip,
   getAllTrips,
   getOneTrip,
   getMyTrip,
-  UserPost,
 };

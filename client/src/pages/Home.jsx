@@ -27,19 +27,19 @@ function Home() {
       >
         <div className="absolute inset-0 bg-black opacity-50 z-20"></div>
         <div className="absolute md:top-64 top-32 z-30 flex flex-col items-center gap-6 md:gap-10 text-white text-center px-4">
-          <h1
-           
-            className="font-semibold  text-4xl md:text-5xl font-display"
-          >
+          <h1 className="font-semibold  text-4xl md:text-5xl font-display">
             Discover the Wonderful World!
           </h1>
 
           <div className="text-lg md:text-xl font-medium px-6">
             <p>"Achive Your dream With Strangers" </p>
           </div>
-          <button className="bg-[#33D69F] transition duration-300 ease-in-out md:px-12 md:py-4 px-3 py-3 text-white font-bold rounded-lg shadow-lg transform hover:scale-105">
-            Get Started
-          </button>
+          <a href="#service">
+            {" "}
+            <button className="bg-[#33D69F] transition duration-300 ease-in-out md:px-12 md:py-4 px-3 py-3 text-white font-bold rounded-lg shadow-lg transform hover:scale-105">
+              Get Started
+            </button>
+          </a>
         </div>
       </div>
 

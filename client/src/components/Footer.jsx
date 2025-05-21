@@ -4,7 +4,10 @@ import whatsapp from "../assets/whatsapp.png";
 
 function Footer() {
   return (
-    <div className="relative bg-white w-full py-10 px-6 md:px-16 lg:px-24 flex flex-col md:flex-row md:gap-10 lg:gap-20">
+    <div
+      id="contact"
+      className="relative bg-white w-full py-10 px-6 md:px-16 lg:px-24 flex flex-col md:flex-row md:gap-10 lg:gap-20"
+    >
       {/* Branding & Social */}
       <div className="flex flex-col md:w-1/3 gap-6 mb-6 md:mb-0">
         <div>

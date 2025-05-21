@@ -14,7 +14,7 @@ function OurServices() {
   }, []);
   return (
     <>
-      <div className="bg-gray-100 md:pt-10 pt-6 flex flex-col items-center">
+      <div id="service" className="bg-gray-100 md:pt-10 pt-6 flex flex-col items-center">
         <h1 className="pb-6 font-extrabold md:text-4xl text-3xl font-[Poppins] text-gray-800 tracking-tight">
           Our Services
         </h1>

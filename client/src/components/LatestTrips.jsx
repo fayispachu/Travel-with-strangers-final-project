@@ -9,14 +9,17 @@ function LatestTrips() {
   const { setSearchTerm } = useContext(TripContext);
 
   return (
-    <div className="flex flex-col md:flex-row w-full min-h-screen pt-20 gap-6 px-5 md:px-16 bg-[#33D69F] text-white">
+    <div
+      id="trips"
+      className="flex flex-col md:flex-row w-full min-h-screen pt-14 gap-6 px-4 sm:px-6 md:px-10 bg-[#33D69F] text-white"
+    >
       {/* Left Side */}
-      <div className="flex flex-col items-center w-full  space-y-6">
-        <div className="flex flex-row w-full justify-center md:justify-start md:ml-36">
+      <div className="flex flex-col w-full md:w-[50%] md:ml-24 space-y-6 ">
+        <div className="flex flex-row w-full justify-center md:justify-start md:ml-3">
           <input
             type="text"
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="bg-white text-black drop-shadow-2xl placeholder-black rounded-full h-10 md:h-12 px-6 w-2/3 md:w-1/2 "
+            className="bg-white text-black drop-shadow-2xl placeholder-black rounded-full h-10 md:h-12 px-6 w-2/3 md:w-1/2"
             placeholder="Search trips..."
           />
           <button className="bg-white hover:bg-gray-200 drop-shadow-2xl px-5 h-10 md:h-12 rounded-full ml-3 transition-colors">
@@ -27,7 +30,7 @@ function LatestTrips() {
       </div>
 
       {/* Right Side */}
-      <div className="relative w-full md:w-1/2 flex flex-col justify-center items-start px-4 md:px-6 space-y-6">
+      <div className="relative w-full md:w-[50%] flex flex-col justify-center items-start px-4 md:px-6 space-y-6">
         <div className="absolute top-2 right-4 md:top-0 md:right-0">
           <CreateButton />
         </div>

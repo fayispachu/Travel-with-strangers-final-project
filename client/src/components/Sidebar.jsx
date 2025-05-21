@@ -11,7 +11,7 @@ function Sidebar() {
     <>
       {sidebarOpen && (
         <div
-          className={`fixed top-0 left-0 bg-[#34495E]  w-[70%] md:w-[300px] h-full z-50 p-6 rounded-r-lg shadow-xl transition-all transform md:hidden ${
+          className={`fixed top-0 left-0 bg-white/40  w-[70%] md:w-[300px] h-full z-50 p-6 rounded-r-lg shadow-xl transition-all transform md:hidden ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >

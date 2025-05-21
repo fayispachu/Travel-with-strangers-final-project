@@ -7,7 +7,6 @@ const {
   getOneTrip,
   getAllTrips,
   getMyTrip,
-  UserPost,
   DeleteTrip,
 } = require("../controller/createtrip.controller");
 
@@ -19,10 +18,15 @@ const {
   setProfile,
   forgotPassword,
   resetPassword,
+  tripJoinedUser,
 } = require("../controller/userAuthentication.controller");
 
 const { authenticateUser } = require("../middleware/auth");
 
+const {
+  saveTripToUser,
+  getSavedTrips,
+} = require("../controller/saveTrip.controller");
 userRouter.post("/create", registerUser);
 userRouter.post("/login", loginData);
 userRouter.get("/profile", authenticateUser, getProfileFromtoken);
@@ -30,6 +34,11 @@ userRouter.get("/users", getAllUsers);
 userRouter.put("/update/profile", authenticateUser, setProfile);
 userRouter.post("/forgot-password", forgotPassword);
 userRouter.post("/reset-password/:token", resetPassword);
+
+userRouter.post("/save-trip", authenticateUser, saveTripToUser);
+userRouter.get("/get-savedtrips", authenticateUser, getSavedTrips);
+
+userRouter.get("/joineduser", authenticateUser, tripJoinedUser);
 
 tripRouter.post(
   "/createtrip",
@@ -42,10 +51,5 @@ tripRouter.get("/onetrip", getOneTrip);
 tripRouter.delete("/delete/:id", authenticateUser, DeleteTrip);
 
 tripRouter.get("/mytrip", authenticateUser, getMyTrip);
-tripRouter.post("/createpost", authenticateUser, UserPost);
-
-
-
-
 
 module.exports = { tripRouter, userRouter };

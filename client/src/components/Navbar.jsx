@@ -27,9 +27,9 @@ function Navbar() {
   return (
     <>
       <div
-        className={`transition-transform duration-300 fixed top-0 w-full z-50 py-2 px-6 flex items-center justify-between shadow-lg ${
+        className={`transition-transform duration-300 fixed  top-0 w-[100%] z-50 py-2 px-6 flex items-center justify-between shadow-lg  ${
           showNavbar ? "translate-y-0" : "-translate-y-full"
-        } bg-white/0`}
+        } bg-white/40`}
       >
         {/* Logo */}
         <h1 className="text-white font-bold text-2xl font-[Poppins] tracking-wide">
@@ -41,15 +41,16 @@ function Navbar() {
           <li className="text-lg font-semibold hover:text-black">
             <Link to="/">Home</Link>
           </li>
+          <a href="#trips">
+            {" "}
+            <li className="text-lg font-semibold hover:text-black">Trips</li>
+          </a>
           <li className="text-lg font-semibold hover:text-black">
-            <Link to="/trips">Trips</Link>
+            <a href="#about">About Us</a>
           </li>
-          <li className="text-lg font-semibold hover:text-black">
-            <Link to="/about">About Us</Link>
-          </li>
-          <li className="text-lg font-semibold hover:text-black">
-            <Link to="/contact">Contact</Link>
-          </li>
+          <a href="#contact">
+            <li className="text-lg font-semibold hover:text-black">Contact</li>
+          </a>
         </ul>
 
         {/* Mobile Nav */}

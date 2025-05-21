@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 
 export const UserContext = createContext();
+
 export const UsersDetailsProvider = ({ children }) => {
   const [users, setUsers] = useState([]);
   const [profile, setProfile] = useState("");
@@ -10,6 +11,8 @@ export const UsersDetailsProvider = ({ children }) => {
   const [filteredUser, setFilteredUser] = useState([]);
   const [searchUser, setSearchUser] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [joinedUser, setJoinedUser] = useState(null);
+
   const token = localStorage.getItem("token");
 
   const getUser = async () => {
@@ -20,25 +23,15 @@ export const UsersDetailsProvider = ({ children }) => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      setUsers(data.users);
-      setFilteredUser(data.users);
+      setUsers(data.users || []);
+      setFilteredUser(data.users || []);
       console.log(data.users, "Get user axios log");
     } catch (error) {
-      console.log(error, "errror from users dataaas check faild");
+      console.log(error, "Error fetching users");
       setUsers([]);
+      setFilteredUser([]);
     }
   };
-
-  useEffect(() => {
-    getUser();
-  }, [searchUser]);
-
-  function OpenSidebar() {
-    setSidebarOpen(true);
-  }
-  function CloseSidebar() {
-    setSidebarOpen(false);
-  }
 
   const checkUser = async () => {
     const token = localStorage.getItem("token");
@@ -56,10 +49,12 @@ export const UsersDetailsProvider = ({ children }) => {
       );
       if (data.doc) {
         setUser(data.doc);
-        console.log(data.doc, "check profile fetched");
+        console.log(data.doc, "User profile fetched");
+      } else {
+        setUser(null);
       }
     } catch (error) {
-      console.log(error, "errror from user check faild");
+      console.log(error, "Error fetching user profile");
       setUser(null);
     } finally {
       setLoading(false);
@@ -68,10 +63,12 @@ export const UsersDetailsProvider = ({ children }) => {
 
   const setProfilepic = async (e) => {
     const image = e.target.files[0];
-    if (!image) return alert("poi image profile settkk");
+    if (!image) return alert("Please select an image to upload.");
+
     const formData = new FormData();
     formData.append("file", image);
     formData.append("upload_preset", "Trip_plan_imges");
+
     try {
       const { data } = await axios.post(
         "https://api.cloudinary.com/v1_1/dtcjm5qss/image/upload",
@@ -79,15 +76,13 @@ export const UsersDetailsProvider = ({ children }) => {
       );
 
       if (!data || !data.secure_url) {
-        alert("Image upload faaaild .no url");
+        alert("Image upload failed.");
         return;
       }
+
       const imageUrl = data.secure_url;
       setProfile(imageUrl);
-      console.log(imageUrl, "image url aane");
-
-      if (!data) return alert("Data illada ponilla profile");
-      console.log(data.secure_url);
+      console.log(imageUrl, "Image URL received");
 
       const token = localStorage.getItem("token");
 
@@ -98,26 +93,63 @@ export const UsersDetailsProvider = ({ children }) => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
       if (!res.data.success) {
-        alert("Profile update faild");
+        alert("Profile update failed");
         return;
       }
 
       setUser(res.data.data);
-
-      await checkUser();
-      alert("Profile updated");
+      alert("Profile updated successfully");
     } catch (error) {
-      alert("faild profile upload");
-      console.log(error, "error from profilesetup frontend");
+      alert("Failed to upload profile picture");
+      console.log(error, "Profile upload error");
     }
+  };
+
+  const checkJoinedUser = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return;
+    }
+
+    try {
+      const { data } = await axios.get(
+        "http://localhost:4000/api/user/joineduser",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (data.joinedUser) {
+        setJoinedUser(data.joinedUser);
+        console.log(data.joinedUser, "Joined user fetched");
+      }
+    } catch (error) {
+      console.log(error, "Error fetching joined user");
+      setJoinedUser(null);
+    }
+  };
+
+  const updateJoinedUser = (tripId) => {
+    setJoinedUser((prev) => {
+      if (!prev) return [tripId];
+      if (!prev.includes(tripId)) return [...prev, tripId];
+      return prev;
+    });
   };
 
   useEffect(() => {
     checkUser();
-
     getUser();
+    checkJoinedUser();
   }, []);
+
+  useEffect(() => {
+    getUser();
+  }, [searchUser]);
+
+  const OpenSidebar = () => setSidebarOpen(true);
+  const CloseSidebar = () => setSidebarOpen(false);
 
   return (
     <UserContext.Provider
@@ -129,12 +161,14 @@ export const UsersDetailsProvider = ({ children }) => {
         profile,
         setProfilepic,
         user,
-
         setUser,
         loading,
         checkUser,
         setSearchUser,
         filteredUser,
+        checkJoinedUser,
+        joinedUser,
+        updateJoinedUser,
       }}
     >
       {children}

@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { User } = require("../models/userAuthentication.model");
 const sendEmail = require("../utils/sendEmail"); // ← Add this line
+const { User } = require("../models/userauthentication.model");
 
 const registerUser = async (req, res) => {
   try {
@@ -53,6 +53,15 @@ const getProfileFromtoken = async (req, res) => {
   }
 };
 
+const tripJoinedUser = async (req, res) => {
+  try {
+    const userData = req.user;
+    return res.status(201).json({ msg: "Profile get success", userData });
+  } catch (error) {
+    console.log(error, "error in tripJoinedUser from token backend");
+  }
+};
+
 const getAllUsers = async (req, res) => {
   try {
     const { name } = req.query;
@@ -80,7 +89,6 @@ const setProfile = async (req, res) => {
         data: updateProfile,
       });
     }
-   
 
     return res
       .status(200)
@@ -139,7 +147,6 @@ const resetPassword = async (req, res) => {
   }
 };
 
-
 module.exports = {
   forgotPassword,
   resetPassword,
@@ -148,4 +155,5 @@ module.exports = {
   getProfileFromtoken,
   getAllUsers,
   setProfile,
+  tripJoinedUser,
 };

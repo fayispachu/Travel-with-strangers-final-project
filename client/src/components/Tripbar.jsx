@@ -8,19 +8,18 @@ function Tripbar() {
   const { trips, handleOneTrip, handleOpen, searchTerm, oneTrip, handleClose } =
     useContext(TripContext);
   const [showMoreCard, setShowMoreCard] = useState(false);
-
   const openMoreCard = () => setShowMoreCard(true);
   const closeMoreCard = () => setShowMoreCard(false);
 
   return (
     <>
       {trips.length === 0 && (
-        <p className="text-center text-red-500 font-semibold mt-4">
+        <p className="text-center  text-red-500 font-semibold mt-4">
           No trips found for "{searchTerm}"
         </p>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 md:w-[80%] w-[70%] gap-3 p-2 overflow-y-auto h-[75vh]  scrollbar-hidden">
+      <div className=" grid grid-cols-1 sm:grid-cols-2 gap-4 p-2 w-full max-h-[80vh] overflow-y-auto scrollbar-hidden">
         {trips.map((trip, index) => (
           <div
             key={index}
