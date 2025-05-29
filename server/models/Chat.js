@@ -4,7 +4,7 @@ const chatSchema = new mongoose.Schema(
   {
     trip: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "createdTrip",
+      ref: "createTrip", // Fixed from "CreatedTrip" to "createTrip"
       required: true,
     },
     members: [

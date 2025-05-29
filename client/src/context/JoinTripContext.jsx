@@ -1,4 +1,3 @@
-// src/context/JoinTripContext.jsx
 import React, { createContext, useContext, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -9,50 +8,16 @@ export const JoinTripContext = createContext();
 
 export const JoinTripProvider = ({ children }) => {
   const [joinStatus, setJoinStatus] = useState("");
-  const { joinedUser, updateJoinedUser } = useContext(UserContext);
-  const { oneTrip: trip } = useContext(TripContext);
   const [joinPopup, setJoinPopup] = useState(false);
   const [joinedTrips, setJoinedTrips] = useState([]);
-
+  const { joinedUser, updateJoinedUser } = useContext(UserContext);
+  const { oneTrip: trip } = useContext(TripContext);
   const navigate = useNavigate();
 
-  // Fetch joined trips from backend
-  const handleGetJoinedTrips = async () => {
-    const token = localStorage.getItem("token");
-    try {
-      const { data } = await axios.get(
-        "http://localhost:4000/api/chat/joined-trips",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      if (data.success) {
-        setJoinedTrips(data.joinedTrips || []);
-      }
-    } catch (error) {
-      console.error("Error fetching joined trips:", error);
-    }
-  };
-
-  const openPopup = () => {
-    setJoinPopup(true);
-  };
-  const closePopup = () => {
-    setJoinPopup(false);
-  };
-
-  // Join group/trip
   const handleJoinGroup = async () => {
-    if (!trip?._id) {
-      setJoinStatus("No trip selected");
-      return;
-    }
-
-    // Check if already joined
-    const isJoined = joinedUser && joinedUser.includes(trip._id);
-    if (isJoined) {
-      setJoinStatus("You have already joined this group.");
-      return;
+    if (!trip?._id) return setJoinStatus("Trip ID missing.");
+    if (joinedUser?.includes(trip._id)) {
+      return setJoinStatus("Already joined this group.");
     }
 
     const token = localStorage.getItem("token");
@@ -67,24 +32,42 @@ export const JoinTripProvider = ({ children }) => {
 
       if (data.success) {
         updateJoinedUser(trip._id);
-        setJoinStatus("Joined group successfully!");
+        setJoinStatus("Joined successfully!");
+        setJoinPopup(false);
         navigate(`/chat/${data.room}`);
       } else {
-        setJoinStatus("Failed to join the group.");
+        setJoinStatus("Failed to join group.");
       }
     } catch (error) {
-      console.error("Error joining group:", error);
+      console.error("Join error:", error);
       setJoinStatus("Failed to join group.");
     }
   };
 
+  const handleGetJoinedTrips = async () => {
+    const token = localStorage.getItem("token");
+    try {
+      const { data } = await axios.get(
+        "http://localhost:4000/api/chat/joined-trips",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (data.success) {
+        setJoinedTrips(data.joinedTrips);
+      }
+    } catch (error) {
+      console.error("Failed to fetch joined trips:", error);
+    }
+  }; 
+
   return (
     <JoinTripContext.Provider
       value={{
-        joinPopup,
-        closePopup,
-        openPopup,
         joinStatus,
+        joinPopup,
+        openPopup: () => setJoinPopup(true),
+        closePopup: () => setJoinPopup(false),
         handleJoinGroup,
         joinedTrips,
         handleGetJoinedTrips,
@@ -92,5 +75,6 @@ export const JoinTripProvider = ({ children }) => {
     >
       {children}
     </JoinTripContext.Provider>
+    
   );
 };

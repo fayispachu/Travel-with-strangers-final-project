@@ -9,7 +9,7 @@ function Footer() {
       className="relative bg-white w-full py-10 px-6 md:px-16 lg:px-24 flex flex-col md:flex-row md:gap-10 lg:gap-20"
     >
       {/* Branding & Social */}
-      <div className="flex flex-col md:w-1/3 gap-6 mb-6 md:mb-0">
+      <div id="about" className="flex flex-col md:w-1/3 gap-6 mb-6 md:mb-0">
         <div>
           <h1 className="text-[#33D69F] font-bold text-2xl">Travel Guys</h1>
           <p className="text-sm md:text-base mt-2 text-gray-700">

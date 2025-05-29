@@ -7,18 +7,24 @@ import openedbookmark from "../assets/bookmarkcomplete.png";
 
 import { TripContext } from "../context/TripContext";
 import { JoinTripContext } from "../context/JoinTripContext";
+import { UserContext } from "../context/UserContext"; // Import UserContext
 import JoinPopup from "./JoinPopup";
+import { useNavigate } from "react-router-dom";
 
 function MoreAboutCard({ closeMoreCard }) {
-  const { oneTrip: trip, oneTrip, handleSaveTrip } = useContext(TripContext);
+  const { oneTrip: trip, handleSaveTrip } = useContext(TripContext);
   const { openPopup, joinStatus } = useContext(JoinTripContext);
+  const { user } = useContext(UserContext); // Get current user data
+  const navigate = useNavigate();
 
   const [isSave, setIsSave] = useState(false);
 
   const toggleSave = () => {
     setIsSave((prev) => !prev);
-    handleSaveTrip(oneTrip._id);
+    handleSaveTrip(trip._id);
   };
+
+  const isAdmin = user?._id === trip?.createdBy; // Check if current user is trip admin
 
   return (
     <div className="bg-gray-200/40 fixed w-full h-full top-0 left-0 z-40 flex items-center justify-center">
@@ -85,18 +91,27 @@ function MoreAboutCard({ closeMoreCard }) {
               {/* Add highlight list here if needed */}
             </div>
 
-            <button
-              onClick={openPopup}
-              className="mt-4 bg-[#33D69F] hover:bg-green-500 text-white px-5 py-2 rounded-lg font-semibold shadow transition-colors"
-            >
-              Join
-            </button>
+            {/* Conditional Button */}
+            {isAdmin ? (
+              <button
+                onClick={() => navigate(`/chat/${trip._id}`)} // Admin opens the chat
+                className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-semibold shadow transition-colors"
+              >
+                Open
+              </button>
+            ) : (
+              <button
+                onClick={openPopup} // Non-admins get Join button
+                className="mt-4 bg-[#33D69F] hover:bg-green-500 text-white px-5 py-2 rounded-lg font-semibold shadow transition-colors"
+              >
+                Join
+              </button>
+            )}
 
             {joinStatus && (
               <p className="text-sm text-blue-600 mt-1">{joinStatus}</p>
             )}
           </div>
-         
         </div>
       </div>
     </div>

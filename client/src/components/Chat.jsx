@@ -7,7 +7,6 @@ import { UserContext } from "../context/UserContext";
 
 function Chat() {
   const { roomId } = useParams();
-  // const navigate = useNavigate();
   const { oneTrip } = useContext(TripContext);
   const { joinedUser } = useContext(UserContext);
   const [message, setMessage] = useState("");
@@ -15,20 +14,20 @@ function Chat() {
   const socket = useRef(null);
   const endRef = useRef(null);
   const [members, setMembers] = useState([]);
-  // const [connectionStatus, setConnectionStatus] = useState("disconnected");
-  const [showSidebar, setShowSidebar] = useState(false);
+  const [showDrawer, setShowDrawer] = useState(false); // 👈 Mobile drawer toggle
   const [exited, setExited] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
 
   const fetchChatData = async () => {
     try {
       const membersRes = await axios.get(
         `http://localhost:4000/api/chat/${roomId}/members`
       );
-      setMembers(membersRes.data.member);
+      const membersArray = Array.isArray(membersRes.data.members)
+        ? membersRes.data.members
+        : [];
+      setMembers(membersArray);
     } catch (err) {
       console.error("Chat initialization error:", err);
-      alert("Failed to load chat data");
     }
   };
 
@@ -42,6 +41,7 @@ function Chat() {
         sender: msg.sender.name || msg.sender.username || "Unknown",
         time: new Date(msg.createdAt),
         fromSelf: msg.sender._id === joinedUser?._id,
+        id: msg._id || `${msg.sender._id}-${msg.createdAt}`,
       }));
       setMessages(formatted);
     } catch (err) {
@@ -51,7 +51,6 @@ function Chat() {
 
   const initSocket = () => {
     const token = localStorage.getItem("token");
-
     socket.current = io("http://localhost:4000", {
       auth: { token },
       reconnectionAttempts: 3,
@@ -59,7 +58,6 @@ function Chat() {
     });
 
     socket.current.on("connect", () => {
-      // setConnectionStatus("connected");
       if (roomId && !exited) {
         socket.current.emit("join_room", roomId);
         setMembers((prev) => {
@@ -71,14 +69,6 @@ function Chat() {
       }
     });
 
-    socket.current.on("connect_error", (err) => {
-      // setConnectionStatus("disconnected");
-      console.log(
-        err,
-        "error from frontend chat connectio error may be disconnected"
-      );
-    });
-
     socket.current.on("receive_message", (data) => {
       setMessages((prev) => [
         ...prev,
@@ -87,6 +77,7 @@ function Chat() {
           sender: data.sender,
           time: new Date(data.timestamp),
           fromSelf: data.senderId === joinedUser?._id,
+          id: data.messageId || `${data.senderId}-${data.timestamp}`,
         },
       ]);
     });
@@ -105,10 +96,7 @@ function Chat() {
     fetchChatData();
     fetchMessages();
     initSocket();
-
-    return () => {
-      socket.current?.disconnect();
-    };
+    return () => socket.current?.disconnect();
   }, [roomId, exited]);
 
   useEffect(() => {
@@ -117,7 +105,6 @@ function Chat() {
 
   const sendMessage = () => {
     if (!message.trim()) return;
-
     socket.current.emit(
       "send_message",
       { room: roomId, message: message.trim() },
@@ -130,6 +117,7 @@ function Chat() {
               sender: joinedUser.name,
               time: new Date(),
               fromSelf: true,
+              id: `temp-${Date.now()}`,
             },
           ]);
           setMessage("");
@@ -151,7 +139,7 @@ function Chat() {
       );
       setExited(true);
       alert("You have exited the group.");
-      setShowMenu(false);
+      setShowDrawer(false);
     } catch (err) {
       alert("Failed to exit group");
       console.error(err);
@@ -159,197 +147,144 @@ function Chat() {
   };
 
   return (
-    <div
-      className="chat-container"
-      style={{
-        maxWidth: 600,
-        margin: "auto",
-        border: "1px solid #4ade80", // green border
-        borderRadius: 12,
-        padding: 16,
-        backgroundColor: "#f0fdf4", // light green background
-        fontFamily: "Arial, sans-serif",
-      }}
-    >
-      <h2 style={{ color: "#065f46", marginBottom: 8 }}>
-        Trip Chat — {oneTrip?.place || "Loading..."}
-      </h2>
-
-      {/* 3-dot button and dropdown */}
-      <div style={{ position: "relative", marginBottom: 12 }}>
+    <div className="mx-auto border border-green-400 rounded-xl p-4 bg-green-50 font-sans flex flex-col md:flex-row gap-4 max-w-5xl">
+      {/* 🧾 Sidebar for large screens */}
+      <aside className="hidden md:block w-1/4 border border-green-400 rounded-lg p-3 max-h-[400px] overflow-y-auto bg-green-100">
+        <h3 className="text-green-900 mb-2 font-bold">
+          Members ({members.length})
+        </h3>
+        <ul>
+          {members.map((m, i) => (
+            <li
+              key={m._id ?? i}
+              className="py-1 border-b border-green-200 text-green-900"
+            >
+              {m.name}
+            </li>
+          ))}
+        </ul>
         <button
-          onClick={() => setShowMenu((prev) => !prev)}
-          aria-label="Menu"
-          style={{
-            background: "transparent",
-            border: "none",
-            cursor: "pointer",
-            fontSize: 24,
-            color: "#065f46",
-          }}
+          onClick={handleExitGroup}
+          disabled={exited}
+          className={`mt-4 w-full py-2 rounded-md font-bold text-white ${
+            exited ? "bg-gray-400" : "bg-green-500 hover:bg-green-600"
+          }`}
         >
-          &#8942;
+          Exit Group
         </button>
-        {showMenu && (
-          <div
-            style={{
-              position: "absolute",
-              top: 30,
-              right: 0,
-              background: "white",
-              border: "1px solid #a7f3d0",
-              borderRadius: 6,
-              boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
-              zIndex: 100,
-              minWidth: 120,
-            }}
+      </aside>
+
+      {/* 💬 Chat section */}
+      <section className="flex-1 flex flex-col">
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="text-green-900 text-xl font-semibold">
+            Trip Chat — {oneTrip?.place || "Loading..."}
+          </h2>
+
+          {/* 🍔 Drawer toggle button */}
+          <button
+            onClick={() => setShowDrawer((prev) => !prev)}
+            aria-label="Menu"
+            className="md:hidden bg-transparent border-none cursor-pointer text-3xl text-green-900"
           >
+            &#8942;
+          </button>
+        </div>
+
+        {/* 📜 Messages */}
+        <div className="border border-green-400 rounded-lg p-3 mb-3 h-72 overflow-y-auto bg-green-100 flex-grow">
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`my-1 text-sm flex ${
+                msg.fromSelf ? "justify-start" : "justify-end"
+              }`}
+            >
+              <div
+                className={`p-2 rounded-lg max-w-[70%] ${
+                  msg.fromSelf
+                    ? "bg-green-200 text-green-800"
+                    : "bg-white text-green-900"
+                }`}
+              >
+                <b>{msg.fromSelf ? "You" : msg.sender}</b>: {msg.text}
+                <br />
+                <small className="text-[0.7rem] text-green-700">
+                  {msg.time.toLocaleTimeString()}
+                </small>
+              </div>
+            </div>
+          ))}
+          <div ref={endRef} />
+        </div>
+
+        {/* ✏️ Input */}
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={message}
+            disabled={exited}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+            placeholder={
+              exited ? "You have exited the group" : "Type a message"
+            }
+            className="flex-1 px-3 py-2 rounded-lg border border-green-400"
+          />
+          <button
+            onClick={sendMessage}
+            disabled={exited || !message.trim()}
+            className={`rounded-lg px-4 py-2 font-bold text-white ${
+              exited || !message.trim()
+                ? "bg-green-200 cursor-not-allowed"
+                : "bg-green-500 hover:bg-green-600"
+            }`}
+          >
+            Send
+          </button>
+        </div>
+
+        {exited && (
+          <p className="text-red-600 mt-3 font-bold">
+            You have left the group chat. Refresh to rejoin if allowed.
+          </p>
+        )}
+      </section>
+
+      {/* 📱 Drawer for small screens */}
+      {showDrawer && (
+        <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-end z-50">
+          <div className="w-64 bg-white h-full p-4 border-l border-green-400 flex flex-col">
+            <h3 className="text-green-900 mb-2 font-bold">
+              Members ({members.length})
+            </h3>
+            <ul className="flex-1 overflow-y-auto">
+              {members.map((m, i) => (
+                <li
+                  key={m._id ?? i}
+                  className="py-1 border-b border-green-200 text-green-900"
+                >
+                  {m.name}
+                </li>
+              ))}
+            </ul>
             <button
               onClick={handleExitGroup}
               disabled={exited}
-              style={{
-                width: "100%",
-                padding: "8px 12px",
-                backgroundColor: exited ? "#9ca3af" : "#22c55e",
-                color: "white",
-                border: "none",
-                borderRadius: 6,
-                cursor: exited ? "not-allowed" : "pointer",
-                fontWeight: "bold",
-              }}
+              className={`mt-4 w-full py-2 rounded-md font-bold text-white ${
+                exited ? "bg-gray-400" : "bg-green-500 hover:bg-green-600"
+              }`}
             >
               Exit Group
             </button>
+            <button
+              onClick={() => setShowDrawer(false)}
+              className="mt-2 w-full py-1 text-green-700 font-bold"
+            >
+              Close
+            </button>
           </div>
-        )}
-      </div>
-
-      {/* Members toggle button */}
-      <button
-        onClick={() => setShowSidebar((prev) => !prev)}
-        style={{
-          marginBottom: 8,
-          backgroundColor: "#22c55e",
-          color: "white",
-          border: "none",
-          padding: "6px 12px",
-          borderRadius: 8,
-          cursor: "pointer",
-          fontWeight: "bold",
-        }}
-      >
-        {showSidebar ? "Hide Members" : "Show Members"}
-      </button>
-
-      {/* Sidebar */}
-      {showSidebar && (
-        <aside
-          style={{
-            border: "1px solid #4ade80",
-            borderRadius: 8,
-            padding: 12,
-            marginBottom: 12,
-            maxHeight: 120,
-            overflowY: "auto",
-            backgroundColor: "#d1fae5",
-          }}
-        >
-          <h3
-            style={{
-              color: "#065f46",
-              marginBottom: 8,
-              fontWeight: "bold",
-            }}
-          >
-            Members ({members.length})
-          </h3>
-          <ul style={{ listStyleType: "none", paddingLeft: 0, margin: 0 }}>
-            {members.map((member) => (
-              <li
-                key={member._id}
-                style={{
-                  padding: "4px 0",
-                  borderBottom: "1px solid #bbf7d0",
-                  color: "#065f46",
-                }}
-              >
-                {member.name}
-              </li>
-            ))}
-          </ul>
-        </aside>
-      )}
-
-      {/* Messages */}
-      <div
-        style={{
-          border: "1px solid #4ade80",
-          borderRadius: 8,
-          padding: 12,
-          marginBottom: 12,
-          height: 300,
-          overflowY: "auto",
-          backgroundColor: "#ecfdf5",
-        }}
-      >
-        {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            style={{
-              textAlign: msg.fromSelf ? "right" : "left",
-              margin: "6px 0",
-              fontSize: 14,
-              color: msg.fromSelf ? "#166534" : "#065f46",
-            }}
-          >
-            <b>{msg.sender}</b>: {msg.text}
-            <br />
-            <small style={{ fontSize: "0.7rem", color: "#4d7c0f" }}>
-              {msg.time.toLocaleTimeString()}
-            </small>
-          </div>
-        ))}
-        <div ref={endRef} />
-      </div>
-
-      {/* Input & send */}
-      <div style={{ display: "flex", gap: 8 }}>
-        <input
-          type="text"
-          value={message}
-          disabled={exited}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          placeholder={exited ? "You have exited the group" : "Type a message"}
-          style={{
-            flex: 1,
-            padding: "8px 12px",
-            borderRadius: 8,
-            border: "1px solid #4ade80",
-            outline: "none",
-          }}
-        />
-        <button
-          onClick={sendMessage}
-          disabled={exited || !message.trim()}
-          style={{
-            backgroundColor: exited || !message.trim() ? "#a7f3d0" : "#22c55e",
-            border: "none",
-            borderRadius: 8,
-            color: "white",
-            fontWeight: "bold",
-            padding: "8px 16px",
-            cursor: exited || !message.trim() ? "not-allowed" : "pointer",
-          }}
-        >
-          Send
-        </button>
-      </div>
-
-      {exited && (
-        <p style={{ color: "#dc2626", marginTop: 12, fontWeight: "bold" }}>
-          You have left the group chat. Refresh to rejoin if allowed.
-        </p>
+        </div>
       )}
     </div>
   );
