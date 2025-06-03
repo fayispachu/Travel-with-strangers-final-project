@@ -13,19 +13,26 @@ const app = express();
 const server = http.createServer(app);
 
 // Models
-const Chat = require("./models/Chat"); // ✅ required for Socket.IO events
+const Chat = require("./models/Chat");
 
 // Middleware
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(express.json());
+
+// Root route
+app.get("/", (req, res) => {
+  res.status(200).json({ message: "Connected to Backend!" });
+});
 
 // Routes
 const { userRouter, tripRouter } = require("./routes/user.route");
 const chatRouter = require("./routes/chatRoutes");
 const { User } = require("./models/userauthentication.model");
-// const { joinedRouter } = require("./routes/joined.route");
-// app.use("/api/user", joinedRouter);
-
 app.use("/api/user", userRouter);
 app.use("/api/trip", tripRouter);
 app.use("/api/chat", chatRouter);
@@ -33,7 +40,7 @@ app.use("/api/chat", chatRouter);
 // Socket.IO setup
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -57,8 +64,6 @@ io.use(async (socket, next) => {
 });
 
 // Socket.IO events
-// server.js or wherever socket.io setup is
-
 io.on("connection", (socket) => {
   console.log(
     `🔌 User connected: ${socket.id} (${socket.user?.name || "Guest"})`
@@ -99,10 +104,7 @@ io.on("connection", (socket) => {
         room: room,
       };
 
-      // Save message to DB
       const savedMessage = await Message.create(msgData);
-
-      // Populate sender name for broadcast
       const populatedMessage = await savedMessage.populate(
         "sender",
         "name username"
@@ -129,8 +131,9 @@ mongoose
   .connect(process.env.CONN_STRING)
   .then(() => {
     console.log("MongoDB Connected");
-    server.listen(4000, () => {
-      console.log("Server running on port 4000");
+    const PORT = process.env.PORT || 4000;
+    server.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
     });
   })
   .catch((err) => console.error("Mongo Error:", err));
