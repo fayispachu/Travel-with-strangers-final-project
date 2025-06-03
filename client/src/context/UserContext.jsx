@@ -2,7 +2,8 @@ import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 
 export const UserContext = createContext();
-  export const FRONTEND_URL = "http://localhost:4000/api/"
+export const FRONTEND_URL =
+  "https://travel-with-strangers-final-project-2.onrender.com";
 
 export const UsersDetailsProvider = ({ children }) => {
   const [users, setUsers] = useState([]);
@@ -13,9 +14,6 @@ export const UsersDetailsProvider = ({ children }) => {
   const [searchUser, setSearchUser] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [joinedUser, setJoinedUser] = useState(null);
-
-
-
 
   const token = localStorage.getItem("token");
 
@@ -45,12 +43,9 @@ export const UsersDetailsProvider = ({ children }) => {
     }
 
     try {
-      const { data } = await axios.get(
-        `${FRONTEND_URL}user/profile`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const { data } = await axios.get(`${FRONTEND_URL}user/profile`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (data.doc) {
         setUser(data.doc);
         console.log(data.doc, "User profile fetched");
@@ -118,12 +113,9 @@ export const UsersDetailsProvider = ({ children }) => {
     }
 
     try {
-      const { data } = await axios.get(
-       `${FRONTEND_URL}user/joineduser`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const { data } = await axios.get(`${FRONTEND_URL}user/joineduser`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (data.joinedUser) {
         setJoinedUser(data.joinedUser);
         console.log(data.joinedUser, "Joined user fetched");
