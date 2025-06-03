@@ -19,7 +19,7 @@ const joinGroupChat = async (req, res) => {
         .json({ success: false, message: "Invalid Trip ID format" });
     }
 
-    const trip = await CreateTrip.findById(tripId);
+    const trip = await CreateTrip.findById(tripId).populate("createdBy");
     if (!trip) {
       return res
         .status(404)
@@ -28,7 +28,11 @@ const joinGroupChat = async (req, res) => {
 
     let chat = await Chat.findOne({ trip: tripId });
     if (!chat) {
-      chat = await Chat.create({ trip: tripId, members: [userId] });
+      chat = await Chat.create({
+        trip: tripId,
+        admin: trip.createdBy._id, // Set the trip creator as the admin
+        members: [userId],
+      });
       console.log("Created chat with ID:", chat._id);
     } else if (!chat.members.includes(userId)) {
       chat.members.push(userId);
@@ -41,6 +45,8 @@ const joinGroupChat = async (req, res) => {
     }
 
     await chat.populate("trip");
+    await chat.populate("admin", "name username");
+    await chat.populate("members", "name username");
     res.status(200).json({
       success: true,
       message: "Joined group successfully",
@@ -48,6 +54,7 @@ const joinGroupChat = async (req, res) => {
       room: chat._id,
       members: chat.members,
       trip: chat.trip,
+      admin: chat.admin,
     });
   } catch (err) {
     console.error("Error joining group chat:", err);
@@ -66,17 +73,20 @@ const getChatMembers = async (req, res) => {
         .json({ success: false, message: "Invalid Room ID format" });
     }
 
-    const chat = await Chat.findById(roomId).populate(
-      "members",
-      "name username isAdmin" // Include isAdmin
-    );
+    const chat = await Chat.findById(roomId)
+      .populate("members", "name username")
+      .populate("admin", "name username");
     if (!chat) {
       return res
         .status(404)
         .json({ success: false, message: "Chat not found" });
     }
 
-    res.status(200).json({ success: true, members: chat.members });
+    res.status(200).json({
+      success: true,
+      members: chat.members,
+      admin: chat.admin,
+    });
   } catch (err) {
     console.error("Error fetching chat members:", err);
     res
@@ -100,10 +110,12 @@ const getChatMessages = async (req, res) => {
     res.status(200).json({ success: true, messages });
   } catch (err) {
     console.error("Error fetching chat messages:", err);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch messages: " + err.message,
-    });
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "Failed to fetch messages: " + err.message,
+      });
   }
 };
 
@@ -123,6 +135,12 @@ const exitGroup = async (req, res) => {
       return res
         .status(404)
         .json({ success: false, message: "Chat not found" });
+    }
+
+    if (chat.admin.toString() === userId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Admin cannot exit the group" });
     }
 
     if (!chat.members.includes(userId)) {
@@ -170,18 +188,20 @@ const addUserToChat = async (req, res) => {
         .json({ success: false, message: "Invalid Room ID or User ID format" });
     }
 
-    const admin = await mongoose.model("User").findById(adminId);
-    if (!admin || !admin.isAdmin) {
-      return res
-        .status(403)
-        .json({ success: false, message: "Only admins can add users" });
-    }
-
     const chat = await Chat.findById(roomId);
     if (!chat) {
       return res
         .status(404)
         .json({ success: false, message: "Chat not found" });
+    }
+
+    if (chat.admin.toString() !== adminId) {
+      return res
+        .status(403)
+        .json({
+          success: false,
+          message: "Only the group admin can add users",
+        });
     }
 
     if (chat.members.includes(userId)) {
@@ -231,24 +251,26 @@ const removeUserFromChat = async (req, res) => {
         .json({ success: false, message: "Invalid Room ID or User ID format" });
     }
 
-    if (userId === adminId) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Admins cannot remove themselves" });
-    }
-
-    const admin = await mongoose.model("User").findById(adminId);
-    if (!admin || !admin.isAdmin) {
-      return res
-        .status(403)
-        .json({ success: false, message: "Only admins can remove users" });
-    }
-
     const chat = await Chat.findById(roomId);
     if (!chat) {
       return res
         .status(404)
         .json({ success: false, message: "Chat not found" });
+    }
+
+    if (chat.admin.toString() !== adminId) {
+      return res
+        .status(403)
+        .json({
+          success: false,
+          message: "Only the group admin can remove users",
+        });
+    }
+
+    if (userId === adminId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Admins cannot remove themselves" });
     }
 
     if (!chat.members.includes(userId)) {
@@ -281,6 +303,36 @@ const removeUserFromChat = async (req, res) => {
   }
 };
 
+
+
+const getChatByTripId = async (req, res) => {
+  try {
+    const { tripId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(tripId)) {
+      return res.status(400).json({ success: false, message: "Invalid Trip ID format" });
+    }
+
+    const chat = await Chat.findOne({ trip: tripId })
+      .populate("trip")
+      .populate("admin", "name username")
+      .populate("members", "name username");
+
+    if (!chat) {
+      return res.status(404).json({ success: false, message: "Chat room not found for this trip" });
+    }
+
+    res.status(200).json({
+      success: true,
+      room: chat._id,
+      chat,
+    });
+  } catch (err) {
+    console.error("Error fetching chat by trip ID:", err);
+    res.status(500).json({ success: false, message: "Server error: " + err.message });
+  }
+};
+
+
 module.exports = {
   joinGroupChat,
   getChatMembers,
@@ -288,4 +340,5 @@ module.exports = {
   exitGroup,
   addUserToChat,
   removeUserFromChat,
+  getChatByTripId, 
 };

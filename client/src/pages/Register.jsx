@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import googleicon from "../assets/google.png";
 import facebookicon from "../assets/facebook.png";
+import { FRONTEND_URL } from "../context/UserContext";
 
 function Register() {
   const [name, setName] = useState("");
@@ -11,11 +12,12 @@ function Register() {
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
+      // const FRONTEND_URL = "http://localhost:4000/api/";
 
   const handleSubmit = async () => {
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/api/user/create",
+        `${FRONTEND_URL}user/create`,
         { name, email, password }
       );
       console.log("User registered: ", data);

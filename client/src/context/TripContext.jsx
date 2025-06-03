@@ -1,6 +1,7 @@
 import { createContext } from "react";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { FRONTEND_URL } from "./UserContext";
 export const TripContext = createContext();
 
 export const TripProvider = ({ children }) => {
@@ -20,12 +21,15 @@ export const TripProvider = ({ children }) => {
   const [yourSaved, setYourSaved] = useState(false);
   const [saveTrip, setSaveTrip] = useState([]);
 
+
+// const FRONTEND_URL = "http://localhost:4000/api/"
+
   // save trip
   const handleSaveTrip = async (tripId) => {
     const token = localStorage.getItem("token");
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/api/user/save-trip",
+        `${FRONTEND_URL}user/save-trip`,
         { tripId },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -45,7 +49,7 @@ export const TripProvider = ({ children }) => {
     const token = localStorage.getItem("token");
     try {
       const { data } = await axios.get(
-        "http://localhost:4000/api/user/get-savedtrips",
+          `${FRONTEND_URL}user/get-savedtrips`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -97,7 +101,7 @@ export const TripProvider = ({ children }) => {
     const token = localStorage.getItem("token");
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/api/trip/createtrip",
+          `${FRONTEND_URL}trip/createtrip`,
         createdTrip,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -118,7 +122,7 @@ export const TripProvider = ({ children }) => {
   const handleGetTrips = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:4000/api/trip/alltrips?place=${searchTerm}`
+         `${FRONTEND_URL}trip/alltrips?place=${searchTerm}`
       );
       setTrips(data.allTrips);
       setFilteredTrip(data.allTrips);
@@ -149,7 +153,7 @@ export const TripProvider = ({ children }) => {
 
     try {
       const { data } = await axios.get(
-        `http://localhost:4000/api/trip/onetrip?id=${id}`
+         `${FRONTEND_URL}trip/onetrip?id=${id}`
       );
       setOneTrip(data.trip);
     } catch (error) {

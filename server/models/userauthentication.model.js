@@ -5,13 +5,9 @@ const userAuthenticationSchema = new mongoose.Schema({
   name: String,
   email: String,
   password: String,
-  instagram: { type: String, default: "" },
-  whatsapp: { type: String, default: "" },
   savedTrips: [{ type: mongoose.Schema.Types.ObjectId, ref: "createTrip" }],
-  joinedTrips: [{ type: mongoose.Schema.Types.ObjectId, ref: "createTrip" }],
-  isAdmin:{type:Boolean, default:false}
+  isAdmin: { type: Boolean, default: false }, // Optional: for global admin status
 });
 
-const User =
-  mongoose.models.User || mongoose.model("User", userAuthenticationSchema);
+const User = mongoose.models.User || mongoose.model("User", userAuthenticationSchema);
 module.exports = { User };

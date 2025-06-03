@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import googleicon from "../assets/google.png";
 import facebookicon from "../assets/facebook.png";
 import axios from "axios";
+import { FRONTEND_URL } from "../context/UserContext";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -12,10 +13,10 @@ function Login() {
   const loginData = async (e) => {
     e.preventDefault();
     try {
-      const endpoint = "http://localhost:4000/api/user/login";
+      // const FRONTEND_URL = "http://localhost:4000/api/";
       const payload = { email, password };
 
-      const { data } = await axios.post(endpoint, payload);
+      const { data } = await axios.post(`${FRONTEND_URL}user/login`, payload);
       localStorage.setItem("token", data.token);
 
       console.log("Login success", data);

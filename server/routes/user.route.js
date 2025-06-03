@@ -10,7 +10,7 @@ const {
   DeleteTrip,
 } = require("../controller/createtrip.controller");
 
-const {
+const  {
   registerUser,
   loginData,
   getProfileFromtoken,

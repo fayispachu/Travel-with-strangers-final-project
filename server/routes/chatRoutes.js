@@ -7,6 +7,7 @@ const {
   exitGroup,
   addUserToChat,
   removeUserFromChat,
+  getChatByTripId,
 } = require("../controller/chatController");
 const { getJoinedTrips } = require("../controller/getJoinedTrips.controller");
 const { authenticateUser } = require("../middleware/auth");
@@ -18,5 +19,5 @@ chatRouter.post("/:roomId/exit", authenticateUser, exitGroup);
 chatRouter.get("/joined-trips", authenticateUser, getJoinedTrips);
 chatRouter.post("/:roomId/add-user", authenticateUser, addUserToChat);
 chatRouter.post("/:roomId/remove-user", authenticateUser, removeUserFromChat);
-
+chatRouter.get("/trip/:tripId", authenticateUser, getChatByTripId);
 module.exports = chatRouter;

@@ -28,14 +28,14 @@ function Tripbar() {
               handleOpen();
               openMoreCard();
             }}
-            className="bg-white text-black rounded-2xl flex flex-col gap-2 p-2 cursor-pointer hover:scale-[1.02] transition-transform duration-200 w-full"
+            className="bg-white text-black rounded-2xl flex flex-col gap-2  cursor-pointer hover:scale-[1.02] transition-transform duration-200 w-full"
           >
             <img
-              className="h-28 w-full object-cover rounded-xl"
+              className="h-28 w-full object-cover rounded-t-xl"
               src={trip.image || tempplace}
               alt="Trip"
             />
-            <div className="flex-1 flex flex-col gap-1 overflow-hidden">
+            <div className="flex-1 flex flex-col gap-1 p-2 overflow-hidden">
               <p className="text-xs text-gray-400">{trip.date}</p>
               <h1 className="text-base font-semibold truncate">{trip.place}</h1>
               <p className="text-sm text-gray-300 line-clamp-2">

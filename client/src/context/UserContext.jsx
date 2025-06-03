@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 
 export const UserContext = createContext();
+  export const FRONTEND_URL = "http://localhost:4000/api/"
 
 export const UsersDetailsProvider = ({ children }) => {
   const [users, setUsers] = useState([]);
@@ -13,12 +14,15 @@ export const UsersDetailsProvider = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [joinedUser, setJoinedUser] = useState(null);
 
+
+
+
   const token = localStorage.getItem("token");
 
   const getUser = async () => {
     try {
       const { data } = await axios.get(
-        `http://localhost:4000/api/user/users?name=${searchUser}`,
+        `${FRONTEND_URL}user/users?name=${searchUser}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -42,7 +46,7 @@ export const UsersDetailsProvider = ({ children }) => {
 
     try {
       const { data } = await axios.get(
-        "http://localhost:4000/api/user/profile",
+        `${FRONTEND_URL}user/profile`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -87,7 +91,7 @@ export const UsersDetailsProvider = ({ children }) => {
       const token = localStorage.getItem("token");
 
       const res = await axios.put(
-        `http://localhost:4000/api/user/update/profile`,
+        `${FRONTEND_URL}user/update/profile`,
         { profilepic: imageUrl },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -115,7 +119,7 @@ export const UsersDetailsProvider = ({ children }) => {
 
     try {
       const { data } = await axios.get(
-        "http://localhost:4000/api/user/joineduser",
+       `${FRONTEND_URL}user/joineduser`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

@@ -11,7 +11,7 @@ function LatestTrips() {
   return (
     <div
       id="trips"
-      className="flex flex-col md:flex-row w-full min-h-screen pt-14 gap-6 px-4 sm:px-6 md:px-10 bg-[#33D69F] text-white"
+      className="flex flex-col md:flex-row w-full min-h-screen pt-10 gap-6 px-4 sm:px-6 md:px-10 bg-[#33D69F] text-white"
     >
       {/* Left Side */}
       <div className="flex flex-col w-full md:w-[50%] md:ml-24 space-y-6 ">
