@@ -29,7 +29,7 @@ export const TripProvider = ({ children }) => {
     const token = localStorage.getItem("token");
     try {
       const { data } = await axios.post(
-        `${FRONTEND_URL}user/save-trip`,
+        `${FRONTEND_URL}/api/user/save-trip`,
         { tripId },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -49,7 +49,7 @@ export const TripProvider = ({ children }) => {
     const token = localStorage.getItem("token");
     try {
       const { data } = await axios.get(
-          `${FRONTEND_URL}user/get-savedtrips`,
+          `${FRONTEND_URL}/api/user/get-savedtrips`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -122,7 +122,7 @@ export const TripProvider = ({ children }) => {
   const handleGetTrips = async () => {
     try {
       const { data } = await axios.get(
-         `${FRONTEND_URL}trip/alltrips?place=${searchTerm}`
+         `${FRONTEND_URL}/api/trip/alltrips?place=${searchTerm}`
       );
       setTrips(data.allTrips);
       setFilteredTrip(data.allTrips);
@@ -153,7 +153,7 @@ export const TripProvider = ({ children }) => {
 
     try {
       const { data } = await axios.get(
-         `${FRONTEND_URL}trip/onetrip?id=${id}`
+         `${FRONTEND_URL}/api/trip/onetrip?id=${id}`
       );
       setOneTrip(data.trip);
     } catch (error) {

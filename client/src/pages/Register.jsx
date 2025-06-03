@@ -17,7 +17,7 @@ function Register() {
   const handleSubmit = async () => {
     try {
       const { data } = await axios.post(
-        `${FRONTEND_URL}user/create`,
+        `${FRONTEND_URL}/api/user/create`,
         { name, email, password }
       );
       console.log("User registered: ", data);

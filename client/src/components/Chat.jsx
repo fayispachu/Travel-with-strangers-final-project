@@ -35,7 +35,7 @@ function Chat() {
         return;
       }
       const response = await axios.get(
-        `${FRONTEND_URL}chat/${roomId}/members`,
+        `${FRONTEND_URL}/api/chat/${roomId}/members`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -57,7 +57,7 @@ function Chat() {
   const fetchMessages = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`${FRONTEND_URL}chat/${roomId}/messages`, {
+      const res = await axios.get(`${FRONTEND_URL}/api/chat/${roomId}/messages`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const formatted = res.data.messages.map((msg) => ({

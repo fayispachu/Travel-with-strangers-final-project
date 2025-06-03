@@ -20,7 +20,7 @@ export const UsersDetailsProvider = ({ children }) => {
   const getUser = async () => {
     try {
       const { data } = await axios.get(
-        `${FRONTEND_URL}user/users?name=${searchUser}`,
+        `${FRONTEND_URL}/api/user/users?name=${searchUser}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -43,7 +43,7 @@ export const UsersDetailsProvider = ({ children }) => {
     }
 
     try {
-      const { data } = await axios.get(`${FRONTEND_URL}user/profile`, {
+      const { data } = await axios.get(`${FRONTEND_URL}/api/user/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (data.doc) {
@@ -113,7 +113,7 @@ export const UsersDetailsProvider = ({ children }) => {
     }
 
     try {
-      const { data } = await axios.get(`${FRONTEND_URL}user/joineduser`, {
+      const { data } = await axios.get(`${FRONTEND_URL}/api/user/joineduser`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (data.joinedUser) {

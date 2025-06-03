@@ -23,7 +23,7 @@ export const JoinTripProvider = ({ children }) => {
       return;
     }
     try {
-      const { data } = await axios.get(`${FRONTEND_URL}chat/joined-trips`, {
+      const { data } = await axios.get(`${FRONTEND_URL}/api/chat/joined-trips`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log("Joined trips response:", data);
@@ -70,7 +70,7 @@ export const JoinTripProvider = ({ children }) => {
     const token = localStorage.getItem("token");
     try {
       const { data } = await axios.post(
-        `${FRONTEND_URL}chat/join`,
+        `${FRONTEND_URL}/api/chat/join`,
         { tripId: trip._id },
         { headers: { Authorization: `Bearer ${token}` } }
       );

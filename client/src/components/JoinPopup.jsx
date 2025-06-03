@@ -39,7 +39,7 @@ function JoinPopup() {
         return;
       }
       const { data } = await axios.get(
-        `${FRONTEND_URL}chat/trip/${trip._id}`,
+        `${FRONTEND_URL}/api/chat/trip/${trip._id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }

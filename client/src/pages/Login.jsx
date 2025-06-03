@@ -16,7 +16,7 @@ function Login() {
       // const FRONTEND_URL = "http://localhost:4000/api/";
       const payload = { email, password };
 
-      const { data } = await axios.post(`${FRONTEND_URL}user/login`, payload);
+      const { data } = await axios.post(`${FRONTEND_URL}/api/user/login`, payload);
       localStorage.setItem("token", data.token);
 
       console.log("Login success", data);
